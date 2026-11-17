@@ -519,12 +519,15 @@ document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>{document.query
 try{navigator.storage&&navigator.storage.persist&&navigator.storage.persist()}catch(e){}
 
 /* tap highlight v1 */
-(()=>{let el=null,t1=0,t2=0;const rm=()=>{clearTimeout(t1);clearTimeout(t2);const x=el;el=null;if(x)t2=setTimeout(()=>x.classList.remove('kpress'),260)};
- const find=n=>{for(let i=0;n&&n!==document.body&&i<7;i++,n=n.parentElement){if(!n.classList)continue;if(n.matches('button,a,input,select,textarea,nav,nav *,.sg,.sgm,.ob,.ob *,.wh'))return null;
+(()=>{const tm=new WeakMap(),on=new Set();let cur=null,t1=0;
+ const off=n=>{clearTimeout(tm.get(n));n.classList.remove('kpress');on.delete(n)};
+ const clr=()=>{clearTimeout(t1);[...on].forEach(off);cur=null};
+ const find=n=>{for(let i=0;n&&n!==document.body&&i<7;i++,n=n.parentElement){if(!n.classList)continue;if(n.matches('button,a,input,select,textarea,label,nav,nav *,.opt,.sg,.sgm,.ob,.ob *,.wh,video,.vs'))return null;
   if(n.classList.contains('hr'))return n;if(n.closest('.hr'))return n.closest('.hr');
   const cs=getComputedStyle(n);if(cs.cursor==='pointer'&&parseFloat(cs.borderTopLeftRadius)>=8)return n}return null};
- addEventListener('pointerdown',e=>{const n=find(e.target);if(!n)return;clearTimeout(t2);if(el&&el!==n)el.classList.remove('kpress');el=n;clearTimeout(t1);t1=setTimeout(()=>n.classList.add('kpress'),50)},true);
- addEventListener('pointerup',rm,true);addEventListener('pointercancel',()=>{clearTimeout(t1);if(el)el.classList.remove('kpress');el=null},true)})();
+ addEventListener('pointerdown',e=>{clr();const n=find(e.target);if(!n)return;cur=n;t1=setTimeout(()=>{if(cur===n){n.classList.add('kpress');on.add(n);tm.set(n,setTimeout(()=>off(n),1500))}},50)},true);
+ addEventListener('pointerup',()=>{clearTimeout(t1);const n=cur;cur=null;if(n&&n.classList.contains('kpress')){clearTimeout(tm.get(n));tm.set(n,setTimeout(()=>off(n),260))}},true);
+ addEventListener('pointercancel',clr,true);addEventListener('scroll',clr,{passive:true,capture:true})})();
 /* onboarding v1 */
 boot();
 </script><script>if('serviceWorker' in navigator)addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}))</script></body></html>
