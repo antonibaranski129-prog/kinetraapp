@@ -435,14 +435,14 @@ function drawTl(){const v=$('#v'),tl=$('#tl'),trk=$('#trk');if(!tl||!trk||!v||!v
  if(rs)for(let i=1;i<=10&&2*i<E.length;i++){const a=E[2*i-2].mt,b=E[2*i].mt,l=Math.max(0,X(a)),r=Math.min(100,X(b));if(r<=l)continue;trk.insertAdjacentHTML('afterbegin',`<i class="cyc${i%2?'':' alt'}" style="left:${PP(l)};width:${PP(r-l)}"></i>`);bot+=`<span style="left:${PP((l+r)/2)}">${i}</span>`}
  for(let j=0;j+1<E.length;j++){const a=E[j],b=E[j+1],ty=gc?(j%2?'flt':'gct'):(j==0?'flt':null);if(!ty)continue;const l=Math.max(0,X(a.mt)),r=Math.min(100,X(b.mt));if(r<=l)continue;const ms=k?((b.mt-a.mt)*k*1000).toFixed(0)+' ms':Math.round((b.mt-a.mt)/q)+' fr',nm=ty=='flt'?'Flight Phase':'Ground Contact';
   trk.insertAdjacentHTML('beforeend',`<i class="sg2 ${ty}" style="left:${PP(l)};width:${PP(r-l)}" title="${nm} · ${ms}"></i>`);
-  if(!rs)bot+=`<span class=${ty} style="left:${PP((l+r)/2)}">${nm}<small>${ms}</small></span>`}
+  }
  E.forEach((e,i)=>{const up=/take/i.test(label(i)),pos=X(e.mt);if(pos<0||pos>100)return;trk.insertAdjacentHTML('beforeend',`<i class="mv ${up?'ta':'ld'}" style="left:${PP(pos)}"></i>`);
   if(rs){if(up)top+=`<span class=ct style="left:${PP(pos)}"><b>T${(i+1)/2}</b></span>`}
   else{const bd=`<span class="bd ${up?'ct':'cl'}" style="left:${PP(pos)}"><b>${up?'T ↑':'L ↓'}</b></span>`;if(up)top+=bd;else low+=bd}});
  $('#lbt').innerHTML=top;$('#lbl').innerHTML=low;$('#lbb').innerHTML=bot;stackLb();
  $('#lg').innerHTML='<span><i class="ln1" style="background:#00CFEA"></i>T ↑ Takeoff</span><span><i class="ln1" style="background:#3478F6"></i>L ↓ Landing</span><span><i class="bar1" style="background:#00CFEA"></i>Flight Phase</span>'+(gc?'<span><i class="bar1" style="background:#F5A623"></i>Ground Contact</span>':'');movePh()}
 function stackLb(){stk($('#lbt'),28,28,'bottom');stk($('#lbb'),38,36,'top')}
-function stk(t,step,base,side){if(!t)return;t.style.height='';const sp=[...t.children].map(e=>({e,r:e.getBoundingClientRect()})).sort((a,b)=>a.r.left-b.r.left),ends=[];
+function stk(t,step,base,side){if(!t)return;t.style.height='';t.style.margin='';if(!t.children.length){t.style.height='0px';t.style.margin='0';return}const sp=[...t.children].map(e=>({e,r:e.getBoundingClientRect()})).sort((a,b)=>a.r.left-b.r.left),ends=[];
  sp.forEach(x=>{let row=0;while(ends[row]!=null&&x.r.left<ends[row]+8)row++;ends[row]=x.r.right;x.e.style[side]=row*step+'px'});t.style.height=(base+Math.max(0,ends.length-1)*step)+'px'}
 function initTl(){const v=$('#v'),tl=$('#tl'),trk=$('#trk');let d=0;const sk=e=>{if(!v.duration)return;const r=trk.getBoundingClientRect(),[a,b]=vwin();v.pause();v.currentTime=a+Math.min(Math.max((e.clientX-r.left)/r.width,0),1)*(b-a)};
  tl.onpointerdown=e=>{d=1;tl.setPointerCapture(e.pointerId);sk(e)};tl.onpointermove=e=>{if(d)sk(e)};tl.onpointerup=()=>{d=0};v.ontimeupdate=()=>movePh();
