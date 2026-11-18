@@ -133,14 +133,15 @@ video{border:1px solid var(--bd)}
 /* touchfix v1 *//* qa fixes v1 */.lbr.tp{height:28px;margin-bottom:18px}.lbr.ld{height:28px;margin-top:18px}.lbr.ld:empty{height:0;margin:0}.lbr.ld span{top:0}
 .lbr .bd b{display:inline-block;min-width:44px;padding:4px 10px;border-radius:9px;font-size:16px;line-height:1.2;letter-spacing:.02em;box-sizing:border-box}
 .lbr .bd.ct b{background:#00CFEA;color:#0B0E13}.lbr .bd.cl b{background:#3478F6;color:#fff}
-.mv.ta{bottom:-2px}.mv.ld{top:-2px;bottom:-18px}.trk[data-k=r] .mv.ld{top:-18px;bottom:-6px}@media(max-width:520px){.hd{display:none}nav button{padding:8px 10px}}
+.mv.ta{bottom:-2px}.mv.ld{top:-2px;bottom:-18px}.trk[data-k=r] .mv.ld{top:-18px;bottom:-6px}@media(max-width:520px){.hd{display:none}nav button{padding:8px 10px}
+@media(max-width:480px){nav button{padding:8px 6px;font-size:13px}nav button.on:after{left:6px;right:6px}}}
 .sgm{display:grid;grid-template-columns:repeat(auto-fit,minmax(92px,1fr));gap:3px;width:100%;box-sizing:border-box}.sgm button{text-align:center;padding:8px 6px}
 .opts.miss{outline:2px solid #EF4444;outline-offset:4px;border-radius:14px}
 /* tap highlight v1 */.kpress{border-color:#00CFEA!important;background-color:rgba(0,207,234,.10)!important;box-shadow:0 0 0 1px #00CFEA;transform:none!important}
 html{touch-action:manipulation}a,button,.card,.tc{-webkit-tap-highlight-color:transparent}
 </style></head><body>
 <header><span class="logo">KINETRA</span><span class="tag">Measure. Analyze. Improve.</span>
-<nav><button data-v="new" class="on">New Test</button><button data-v="prof"><span class=hd>Athlete </span>Profile</button><button data-v="hist">Progression</button><button data-v="set">Settings</button></nav></header>
+<nav><button data-v="new" class="on">New Test</button><button data-v="prof"><span class=hd>Athlete </span>Profile</button><button data-v="fr">Freshness</button><button data-v="hist">Progression</button><button data-v="set">Settings</button></nav></header>
 <div id="ob" class="ob on"><div class="sk" style="width:200px;height:12px;border-radius:6px;margin:45vh auto 0"></div></div>
 <main id="m"></main>
 <script>
@@ -194,6 +195,12 @@ const ASYM=[[5,'Low asymmetry','#22C55E'],[10,'Moderate asymmetry','#F5C542'],[I
 function asymCls(a){const v=Math.round(a*10)/10,t=ASYM.find(x=>v<x[0]);return{l:t[1],c:t[2]}}
 const PCOL=[[30,'#800020'],[50,'#EF4444'],[70,'#F97316'],[80,'#FACC15'],[90,'#22C55E'],[Infinity,'#00CFEA']];
 const pcolV=v=>PCOL.find(x=>v<=x[0])[1],pcol=p=>p.lt?PCOL[0][1]:p.gt?PCOL[PCOL.length-1][1]:pcolV(Math.round(p.p));
+const FR_N=7,FR_DAYS=28,dayN=d=>Math.floor(Date.parse(d+'T00:00:00Z')/864e5);
+function frDaily(rs){const m={};rs.filter(x=>okR(x)&&x.k=='cmj'&&pk(x)==PK.cmj).sort((a,b)=>Number(a.id)-Number(b.id)).forEach(x=>{if(!m[x.date])m[x.date]=x});return Object.values(m).sort((a,b)=>a.date<b.date?-1:a.date>b.date?1:0)}
+function frState(rs,today){const d=frDaily(rs),td=dayN(today),t=d.find(x=>x.date==today),base=d.filter(x=>{const n=td-dayN(x.date);return n>=1&&n<=FR_DAYS}),n=base.length,r={t,n,need:FR_N,base,days:d};
+ if(!t)return{...r,st:'notest'};if(n<FR_N)return{...r,st:'learning',v:val(t)};
+ const v=base.map(val),mean=v.reduce((a,b)=>a+b,0)/n,sd=Math.sqrt(v.reduce((a,b)=>a+(b-mean)*(b-mean),0)/(n-1)),thr=Math.max(1.5,Math.min(sd,.05*mean)),x=val(t),delta=x-mean;
+ return{...r,st:delta<-thr?'fatigued':delta>thr?'fresh':'normal',v:x,mean,sd,thr,delta,dp:delta/mean*100,lo:mean-thr,hi:mean+thr}}
 //#END
 function toast(m){let t=$('.toast');if(!t){t=document.createElement('div');t.className='toast';document.body.appendChild(t)}t.textContent=m;t.classList.add('on');clearTimeout(t._h);t._h=setTimeout(()=>t.classList.remove('on'),2200)}
 const segCtl=a=>`<div class=sg><button data-s=v${a=='v'?' class=on':''}>Video analysis</button><button data-s=m${a=='m'?' class=on':''}>Manual entry</button></div>`;
@@ -493,6 +500,20 @@ function chart(a,u,W,col='#00CFEA'){const H=170,pl=42,pr=14,pt=18,pb=26,vs=a.map
  for(let i=0;i<3;i++){const v=lo+(hi-lo)*i/2,y=Y(v);g+=`<line x1=${pl} x2=${W-pr} y1=${y} y2=${y} stroke="#252E3B"/><text x=${pl-6} y=${y+4} text-anchor=end fill="#8995A5" font-size=11>${v.toFixed(dc)}</text>`}
  return `<svg width=${W} height=${H}><text x=4 y=11 fill="#8995A5" font-size=11>${u}</text>${g}<text x=${pl} y=${H-6} fill="#8995A5" font-size=11>${a[0].d}</text>${a.length>1?`<text x=${W-pr} y=${H-6} text-anchor=end fill="#8995A5" font-size=11>${a[a.length-1].d}</text><polyline points="${a.map((p,i)=>X(i)+','+Y(p.v)).join(' ')}" fill=none stroke="${col}" stroke-width=2.5 stroke-linejoin=round />`:''}${a.map((p,i)=>`<circle cx=${X(i)} cy=${Y(p.v)} r=${i==best?6:4} fill="${i==best?col:'#0B0E13'}" stroke="${col}" stroke-width=2><title>${p.d} · ${p.v.toFixed(dc)} ${u}</title></circle>`).join('')}</svg>`}
 function paint(){document.querySelectorAll('.ch').forEach(el=>{const g=GS[el.dataset.g];if(g)el.innerHTML=chart(g.pts,g.u,el.clientWidth||300,g.c)})}
+const FRC={fresh:['#22C55E','Fresh','Above your usual level. Good readiness for a hard session.'],normal:['#00CFEA','Normal','In line with your usual level. Train as planned.'],fatigued:['#EF4444','Fatigued','Below your usual level. Consider lighter load or more recovery.']};
+function frChart(r){const d=r.days.filter(x=>dayN(r.t.date)-dayN(x.date)<=FR_DAYS);if(d.length<2)return'';const W=600,H=170,pl=36,pr=10,pt=12,pb=22,v=d.map(val);let lo=Math.min(...v),hi=Math.max(...v);if(r.lo!=null){lo=Math.min(lo,r.lo);hi=Math.max(hi,r.hi)}const pd=(hi-lo)*.15||1;lo-=pd;hi+=pd;
+ const d0=dayN(d[0].date),d1=dayN(d[d.length-1].date),X=x=>pl+(dayN(x.date)-d0)/Math.max(1,d1-d0)*(W-pl-pr),Y=y=>pt+(hi-y)/(hi-lo)*(H-pt-pb),c=r.st in FRC?FRC[r.st][0]:'#00CFEA';
+ const band=r.lo!=null?`<rect x=${pl} y=${Y(r.hi)} width=${W-pl-pr} height=${Y(r.lo)-Y(r.hi)} fill="#00CFEA" opacity=.12 /><line x1=${pl} x2=${W-pr} y1=${Y(r.mean)} y2=${Y(r.mean)} stroke="#8995A5" stroke-dasharray="4 4" />`:'';
+ return`<svg viewBox="0 0 ${W} ${H}" width=100% style="display:block;margin-top:12px">${band}<polyline fill=none stroke="#00CFEA" stroke-width=2 stroke-linejoin=round points="${d.map(x=>X(x)+','+Y(val(x))).join(' ')}" />${d.map(x=>`<circle cx=${X(x)} cy=${Y(val(x))} r=${x==r.t?6:3.5} fill="${x==r.t?c:'#0B0E13'}" stroke="${x==r.t?c:'#00CFEA'}" stroke-width=2 />`).join('')}<text x=4 y=${Y(hi-pd)+4} fill="#8995A5" font-size=13>${(hi-pd).toFixed(0)}</text><text x=4 y=${Y(lo+pd)+4} fill="#8995A5" font-size=13>${(lo+pd).toFixed(0)}</text><text x=${pl} y=${H-4} fill="#8995A5" font-size=13>${fd(d[0].date).slice(0,-5)}</text><text x=${W-pr} y=${H-4} fill="#8995A5" font-size=13 text-anchor=end>${fd(d[d.length-1].date).slice(0,-5)}</text></svg>`}
+async function fresh(){try{setINC(localStorage.getItem('kinc')!=='0')}catch(e){}S=null;M.innerHTML='<div class=sk style="height:200px"></div>';
+ const rs=await tx('readonly',s=>s.getAll()),today=new Date().toISOString().slice(0,10),r=frState(rs,today),c=FRC[r.st];
+ const q='<button class=p id=frq style="margin-top:14px">Quick test: CMJ now →</button>';
+ let body;
+ if(r.st=='notest')body=`<b style="font-size:20px">No CMJ logged today</b><p class=pf2 style="margin:8px 0 0;line-height:1.5">${r.n>=FR_N?'Do one CMJ to see how fresh your legs are compared with your usual level.':`Baseline: ${r.n}/${FR_N} days collected. Log one CMJ a day to unlock the readiness check.`}</p>${q}`;
+ else if(r.st=='learning')body=`<b style="font-size:20px">Building your baseline</b><div class=seg style="margin-top:12px">${Array.from({length:FR_N},(_,i)=>`<i class="${i<r.n?'e':''}"></i>`).join('')}</div><p class=pf2 style="margin:10px 0 0;line-height:1.5">Today's CMJ: <b>${r.v.toFixed(1)} cm</b>. You need ${FR_N} earlier days with a CMJ in the last ${FR_DAYS} days (${r.n}/${FR_N} so far). One test per day counts.</p>`;
+ else body=`<div class=lab2>TODAY</div><div class=pv style="color:${c[0]};font-size:44px">${c[1]}</div><p class=pf2 style="margin:6px 0 0;line-height:1.5">${c[2]}</p><div class=chips style="margin-top:12px"><span class=chip>CMJ ${r.v.toFixed(1)} cm</span><span class=chip>${r.delta>=0?'+':''}${r.delta.toFixed(1)} cm (${r.dp>=0?'+':''}${r.dp.toFixed(1)}%) vs baseline</span>${r.t.res.flight?`<span class=chip>Flight ${Math.round(r.t.res.flight*1000)} ms</span>`:''}</div><p class=pf2 style="margin:12px 0 0;line-height:1.5">Your baseline ${r.mean.toFixed(1)} cm (SD ${r.sd.toFixed(1)}, ${r.n} days). Normal range ${r.lo.toFixed(1)}–${r.hi.toFixed(1)} cm.</p>`;
+ M.innerHTML=`<h2>Leg Freshness</h2><p class=mu style="max-width:620px">Compares your first double-leg, Hands on Hips CMJ of the day with your own last ${FR_DAYS} days. Only one jump per day counts.</p><div class=pn2 style="margin-top:12px">${body}${r.st=='notest'?'':frChart(r)}</div><div class=pn2 style="margin-top:12px"><div class=pt>How to use it</div><p class=pf2 style="margin:6px 0 0;line-height:1.55">Test at a similar time of day and after the same warm-up, with the same recording FPS. Video measurement error is about 1–2 cm at 30 FPS, so the normal range is never narrower than ±1.5 cm. Fresh and Fatigued describe today's jump relative to your own recent level. They are not a medical assessment. To exclude a bad first jump, void it in Progression.</p></div>`;
+ const b=$('#frq');if(b)b.onclick=()=>{goTest('cmj');document.querySelectorAll('.opts[data-g=type] .opt,.opts[data-g=arm] .opt').forEach(o=>{if(o.dataset.v=='Double-Leg'||o.dataset.v=='Hands on Hips')o.click()})}}
 async function hist(){M.innerHTML='<div class=sk></div><div class=sk></div>';const raw=await tx('readonly',s=>s.getAll()),all=raw.filter(x=>!x.invalid).map(x=>x.k=='sp'?{...x,k:(x.ctx&&x.ctx.mode=='Flying Sprint')?'spf':'sps'}:x);S=null;
  const ORD=['Countermovement Jump','Squat Jump','Approach Vertical Jump','Drop Jump','RSI 10/5'],LO=['Both legs','Right leg','Left leg'];
  M.innerHTML=`<h2>Progression</h2><div class=row><select id=fc><option value="">All tests</option>${ORD.map(o=>`<option>${o}</option>`).join('')}</select><select id=fl><option value="">All legs</option>${LO.map(o=>`<option>${o}</option>`).join('')}</select><button id=csv>Export CSV</button></div><div id=gs></div><div class=st>Recent tests</div><div id=rt></div>`;
@@ -547,7 +568,7 @@ async function prof(){try{setINC(localStorage.getItem('kinc')!=='0')}catch(e){}S
  M.querySelectorAll('[data-fix]').forEach(a=>a.onclick=async e=>{e.preventDefault();const t=a.dataset.fix,v=(prompt('Arm movement used in these older results: type "hips" for Hands on Hips or "swing" for Arm Swing')||'').toLowerCase(),arm=v.startsWith('h')?'Hands on Hips':v.startsWith('s')?'Arm Swing':null;if(!arm)return;for(const x of rs.filter(q=>q.k==t&&!(q.ctx&&q.ctx.arms))){x.ctx=x.ctx||{};x.ctx.arms=arm;await tx('readwrite',s=>s.put(x))}toast('Updated');prof()});
  requestAnimationFrame(()=>requestAnimationFrame(()=>{M.querySelectorAll('.mk').forEach(m=>m.style.left=m.dataset.t+'%');M.querySelectorAll('.rg').forEach(r=>r.style.strokeDasharray=r.dataset.d+' 213.6')}));}
 function nameWire(){athWire();uWire();const c=$('#inc');if(c)c.onchange=()=>{setINC(c.checked);try{localStorage.setItem('kinc',c.checked?'1':'0')}catch(e){}prof()};const i=$('#an');if(i)i.oninput=()=>{try{localStorage.setItem('kn',i.value)}catch(e){}}}
-document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>{document.querySelectorAll('nav button').forEach(x=>x.classList.toggle('on',x==b));b.dataset.v=='new'?home():b.dataset.v=='prof'?prof():b.dataset.v=='set'?settings():hist()});
+document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>{document.querySelectorAll('nav button').forEach(x=>x.classList.toggle('on',x==b));b.dataset.v=='new'?home():b.dataset.v=='prof'?prof():b.dataset.v=='set'?settings():b.dataset.v=='fr'?fresh():hist()});
 try{navigator.storage&&navigator.storage.persist&&navigator.storage.persist()}catch(e){}
 
 /* tap highlight v1 */
