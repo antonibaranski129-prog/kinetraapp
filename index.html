@@ -130,7 +130,7 @@ video{border:1px solid var(--bd)}
 .big{font-weight:700;font-size:56px;letter-spacing:-.02em}.tl{background:var(--s2)}
 .toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translate(-50%,20px);background:var(--s2);border:1px solid var(--bd);padding:10px 16px;border-radius:12px;font-weight:600;opacity:0;transition:.25s;z-index:50;pointer-events:none}.toast.on{opacity:1;transform:translate(-50%,0)}
 @media(max-width:640px){header{padding:10px 14px}nav{width:100%;overflow-x:auto;margin-left:-4px}nav button.on:after{bottom:-1px}main{padding:16px 14px 60px}h2{font-size:20px}.big{font-size:44px}}
-/* touchfix v1 *//* qa fixes v1 */@media(max-width:520px){.hd{display:none}nav button{padding:8px 10px}}
+/* touchfix v1 *//* qa fixes v1 */.lbr.tp{height:28px;margin-bottom:8px}.lbr.tp b{font-size:20px;line-height:1.1;letter-spacing:.02em}@media(max-width:520px){.hd{display:none}nav button{padding:8px 10px}}
 .sgm{display:grid;grid-template-columns:repeat(auto-fit,minmax(92px,1fr));gap:3px;width:100%;box-sizing:border-box}.sgm button{text-align:center;padding:8px 6px}
 .opts.miss{outline:2px solid #EF4444;outline-offset:4px;border-radius:14px}
 /* tap highlight v1 */.kpress{border-color:#00CFEA!important;background-color:rgba(0,207,234,.10)!important;box-shadow:0 0 0 1px #00CFEA;transform:none!important}
@@ -435,11 +435,11 @@ function drawTl(){const v=$('#v'),tl=$('#tl'),trk=$('#trk');if(!tl||!trk||!v||!v
   if(!rs)bot+=`<span class=${ty} style="left:${PP((l+r)/2)}">${nm}<small>${ms}</small></span>`}
  E.forEach((e,i)=>{const up=/take/i.test(label(i)),pos=X(e.mt);if(pos<0||pos>100)return;trk.insertAdjacentHTML('beforeend',`<i class="mv ${up?'ta':'ld'}" style="left:${PP(pos)}"></i>`);
   if(rs){if(up)top+=`<span class=ct style="left:${PP(pos)}"><b>T${(i+1)/2}</b></span>`}
-  else top+=`<span class="${up?'ct':'cl'} ${pos<9?'l0':pos>91?'r0':''}" style="left:${PP(pos)}"><b>${label(i)}</b><small>fr ${e.fr} · ${e.mt.toFixed(3)} s</small></span>`});
+  else top+=`<span class="${up?'ct':'cl'} ${pos<9?'l0':pos>91?'r0':''}" style="left:${PP(pos)}"><b>${up?'T ↑':'L ↓'}</b></span>`});
  $('#lbt').innerHTML=top;$('#lbb').innerHTML=bot;stackLb();
- $('#lg').innerHTML='<span><i class="ln1" style="background:#00CFEA"></i>Takeoff</span><span><i class="ln1" style="background:#3478F6"></i>Landing</span><span><i class="bar1" style="background:#00CFEA"></i>Flight Phase</span>'+(gc?'<span><i class="bar1" style="background:#F5A623"></i>Ground Contact</span>':'');movePh()}
+ $('#lg').innerHTML='<span><i class="ln1" style="background:#00CFEA"></i>T ↑ Takeoff</span><span><i class="ln1" style="background:#3478F6"></i>L ↓ Landing</span><span><i class="bar1" style="background:#00CFEA"></i>Flight Phase</span>'+(gc?'<span><i class="bar1" style="background:#F5A623"></i>Ground Contact</span>':'');movePh()}
 function stackLb(){const t=$('#lbt');if(!t)return;t.style.height='';const sp=[...t.children].map(e=>({e,r:e.getBoundingClientRect()})).sort((a,b)=>a.r.left-b.r.left),ends=[];
- sp.forEach(x=>{let row=0;while(ends[row]!=null&&x.r.left<ends[row]+8)row++;ends[row]=x.r.right;x.e.style.bottom=row*42+'px'});t.style.height=(40+Math.max(0,ends.length-1)*42)+'px'}
+ sp.forEach(x=>{let row=0;while(ends[row]!=null&&x.r.left<ends[row]+8)row++;ends[row]=x.r.right;x.e.style.bottom=row*28+'px'});t.style.height=(28+Math.max(0,ends.length-1)*28)+'px'}
 function initTl(){const v=$('#v'),tl=$('#tl'),trk=$('#trk');let d=0;const sk=e=>{if(!v.duration)return;const r=trk.getBoundingClientRect(),[a,b]=vwin();v.pause();v.currentTime=a+Math.min(Math.max((e.clientX-r.left)/r.width,0),1)*(b-a)};
  tl.onpointerdown=e=>{d=1;tl.setPointerCapture(e.pointerId);sk(e)};tl.onpointermove=e=>{if(d)sk(e)};tl.onpointerup=()=>{d=0};v.ontimeupdate=()=>movePh();
  tl.addEventListener('wheel',e=>{e.preventDefault();const r=trk.getBoundingClientRect(),[a,b]=vwin(),t=a+(e.clientX-r.left)/r.width*(b-a);if(ZV&&Math.abs(e.deltaX)>Math.abs(e.deltaY)){const w=b-a,na=Math.min(Math.max(a+e.deltaX/r.width*w,0),v.duration-w);ZV=[na,na+w];zUpd();drawTl()}else zoom(e.deltaY>0?1.25:.8,t)},{passive:false});
