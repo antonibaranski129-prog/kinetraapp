@@ -23,6 +23,7 @@ create table if not exists public.results (
   k text, date text,
   data jsonb not null,
   updated_at timestamptz not null default now(),
+  synced_at timestamptz not null default now(),
   deleted boolean not null default false,
   primary key (athlete_id, id)
 );
@@ -106,3 +107,11 @@ grant execute on function public.create_invite(text) to authenticated;
 grant execute on function public.redeem_invite(text, text) to authenticated;
 revoke execute on function public.create_invite(text) from anon;
 revoke execute on function public.redeem_invite(text, text) from anon;
+
+-- Server arrival time (see supabase-migration-2.sql)
+create or replace function public.touch_synced_at() returns trigger
+language plpgsql as $$ begin new.synced_at := now(); return new; end $$;
+drop trigger if exists results_touch_synced on public.results;
+create trigger results_touch_synced before insert or update on public.results
+  for each row execute function public.touch_synced_at();
+create index if not exists results_synced_idx on public.results (synced_at);
