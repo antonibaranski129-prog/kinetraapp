@@ -20,6 +20,7 @@ main{max-width:980px;margin:0 auto;padding:18px}
 .tc{cursor:pointer;transition:.15s}@media(hover:hover){.tc:hover{border-color:var(--lime);transform:translateY(-2px)}}
 .mu{color:var(--mu)}.big{font-size:64px;font-weight:800;color:var(--lime);line-height:1}
 .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:10px 0}
+#f{flex:1 1 100%;width:100%;max-width:100%;min-width:0;box-sizing:border-box}
 video{width:100%;max-height:60vh;background:#000;border-radius:12px}
 .warn{background:#2a2410;border:1px solid #5c4b12;color:#ffd666;padding:10px 12px;border-radius:10px;margin:8px 0;font-size:13px}
 .ev{display:flex;justify-content:space-between;gap:8px;padding:8px 0;border-bottom:1px solid var(--bd)}
@@ -129,11 +130,14 @@ video{border:1px solid var(--bd)}
 .big{font-weight:700;font-size:56px;letter-spacing:-.02em}.tl{background:var(--s2)}
 .toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translate(-50%,20px);background:var(--s2);border:1px solid var(--bd);padding:10px 16px;border-radius:12px;font-weight:600;opacity:0;transition:.25s;z-index:50;pointer-events:none}.toast.on{opacity:1;transform:translate(-50%,0)}
 @media(max-width:640px){header{padding:10px 14px}nav{width:100%;overflow-x:auto;margin-left:-4px}nav button.on:after{bottom:-1px}main{padding:16px 14px 60px}h2{font-size:20px}.big{font-size:44px}}
-/* touchfix v1 *//* tap highlight v1 */.kpress{border-color:#00CFEA!important;background-color:rgba(0,207,234,.10)!important;box-shadow:0 0 0 1px #00CFEA;transform:none!important}
+/* touchfix v1 *//* qa fixes v1 */@media(max-width:520px){.hd{display:none}nav button{padding:8px 10px}}
+.sgm{display:grid;grid-template-columns:repeat(auto-fit,minmax(92px,1fr));gap:3px;width:100%;box-sizing:border-box}.sgm button{text-align:center;padding:8px 6px}
+.opts.miss{outline:2px solid #EF4444;outline-offset:4px;border-radius:14px}
+/* tap highlight v1 */.kpress{border-color:#00CFEA!important;background-color:rgba(0,207,234,.10)!important;box-shadow:0 0 0 1px #00CFEA;transform:none!important}
 html{touch-action:manipulation}a,button,.card,.tc{-webkit-tap-highlight-color:transparent}
 </style></head><body>
 <header><span class="logo">KINETRA</span><span class="tag">Measure. Analyze. Improve.</span>
-<nav><button data-v="new" class="on">New Test</button><button data-v="prof">Athlete Profile</button><button data-v="hist">Progression</button><button data-v="set">Settings</button></nav></header>
+<nav><button data-v="new" class="on">New Test</button><button data-v="prof"><span class=hd>Athlete </span>Profile</button><button data-v="hist">Progression</button><button data-v="set">Settings</button></nav></header>
 <div id="ob" class="ob on"><div class="sk" style="width:200px;height:12px;border-radius:6px;margin:45vh auto 0"></div></div>
 <main id="m"></main>
 <script>
@@ -188,7 +192,7 @@ function manual(){S=null;const td=new Date().toISOString().slice(0,10);
  M.innerHTML=segCtl('m')+`<h2>Manual result</h2><p class=mu style="max-width:620px">Enter a result from a real test, e.g. a jump mat, force plate or timing system. It is saved as an unverified manual entry and kept separate from video-measured records in personal bests and progression.</p><div class=row><select id=mt>${[['cmj','Countermovement Jump'],['sj','Squat Jump'],['rj2','Approach Vertical Jump'],['dj','Drop Jump'],['rsi','RSI 10/5']].map(([k,n])=>`<option value=${k}>${n}</option>`).join('')}</select><label class=mu>Date <input type=date id=md value="${td}" max="${td}"></label></div><div id=mo></div><div id=mv class=row></div><div id=me></div><div class=row><input id=mn placeholder="Notes (optional)" style="flex:1;min-width:200px"><button class=p id=ms>Save result</button></div>`;
  const draw=()=>{const k=$('#mt').value;$('#mo').innerHTML=optsHtml(k);
   $('#mv').innerHTML=k=='rsi'?'<label class=mu>RSI 10/5 score <input id=v1 type=number step=0.01 min=0 style="width:120px"> m/s</label>':k=='dj'?'<label class=mu>Jump height <input id=v1 type=number step=0.1 style="width:110px"> cm</label><label class=mu>Contact time <input id=v2 type=number step=1 style="width:110px"> ms</label><label class=mu>Box <select id=mb>'+[15,20,30,40,50].map(x=>`<option${x==30?' selected':''}>${x}</option>`).join('')+'</select> cm</label><input id=mc type=number placeholder="custom box cm" style="width:130px">':'<label class=mu>Jump height <input id=v1 type=number step=0.1 style="width:110px"> cm</label>';
-  document.querySelectorAll('.opt').forEach(o=>o.onclick=()=>{o.parentNode.querySelectorAll('.opt').forEach(x=>x.classList.toggle('sel',x==o));const lg=$('#legg');if(lg&&o.parentNode.dataset.g=='type')lg.style.display=o.dataset.v=='Single-Leg'?'':'none'})};
+  document.querySelectorAll('.opt').forEach(o=>o.onclick=()=>{o.parentNode.classList.remove('miss');o.parentNode.querySelectorAll('.opt').forEach(x=>x.classList.toggle('sel',x==o));const lg=$('#legg');if(lg&&o.parentNode.dataset.g=='type')lg.style.display=o.dataset.v=='Single-Leg'?'':'none'})};
  $('#mt').onchange=draw;draw();
  $('#ms').onclick=async()=>{try{let k=$('#mt').value;const q=g=>{const o=document.querySelector(`.opts[data-g=${g}] .opt.sel`);return o&&o.dataset.v},n=id=>parseFloat($(id).value),c={},d=$('#md').value;
   if(!d||d>td)throw 'Choose a valid date (not in the future).';
@@ -276,7 +280,9 @@ function uRow(p){const nm={cmj:'CMJ',sj:'SJ',avj:'Approach Jump',dj:'Drop Jump'}
  return`<div class=ur>${hd}<div class=erh><div><div class=lab2>LEFT</div><div class=erv style="color:var(--cy)">${lp}<small>%</small></div></div><div style="text-align:right"><div class=lab2>RIGHT</div><div class=erv style="color:var(--bl)">${rp}<small>%</small></div></div></div><div class=seg>${Array.from({length:40},(_,j)=>`<i class="${j<Math.round(lp*.4)?'e':''}" style="animation-delay:${j*14}ms"></i>`).join('')}</div><div class=sl2><span>0</span><span>50 · balanced</span><span>100</span></div><div class="chip ok" style="margin-top:12px;font-weight:700">${l==r?'Balanced':(l>r?'Left':'Right')+' stronger · '+as.toFixed(1)+'% asymmetry'}</div><p class=pf2 style="margin:10px 0 0;line-height:1.5">Left ${f(l)} ${u} · Right ${f(r)} ${u} · Difference ${f(d)} ${u}. Bars show each leg's share of the combined best results; asymmetry = |L − R| ÷ stronger side.</p></div>`}
 async function exportAll(){const rs=await tx('readonly',s=>s.getAll());let nm='';try{nm=localStorage.getItem('kn')||''}catch(e){}
  const d={app:'kinetra',version:1,exported:new Date().toISOString(),name:nm,athlete:getAth(),prefs:PREF,records:rs},a=document.createElement('a');
- a.href=URL.createObjectURL(new Blob([JSON.stringify(d)],{type:'application/json'}));a.download='kinetra-backup-'+new Date().toISOString().slice(0,10)+'.json';a.click();toast('Backup saved · '+rs.length+' results')}
+ const nmf='kinetra-backup-'+new Date().toISOString().slice(0,10)+'.json',bl=new Blob([JSON.stringify(d)],{type:'application/json'});
+ try{const f=new File([bl],nmf,{type:'application/json'});if(navigator.canShare&&navigator.canShare({files:[f]})){await navigator.share({files:[f],title:'KINETRA backup'});toast('Backup shared · '+rs.length+' results');return}}catch(e){if(e&&e.name=='AbortError')return}
+ a.href=URL.createObjectURL(bl);a.download=nmf;document.body.appendChild(a);a.click();setTimeout(()=>{a.remove();URL.revokeObjectURL(a.href)},4000);toast('Backup saved · '+rs.length+' results')}
 async function importAll(f){try{const d=JSON.parse(await f.text());if(d.app!='kinetra'||!Array.isArray(d.records))throw 'This is not a Kinetra backup file.';
  const ex=new Set((await tx('readonly',s=>s.getAllKeys())).map(String));let n=0,sk=0;
  for(const r of d.records){if(r&&r.id&&r.k&&r.res&&!ex.has(String(r.id))){await tx('readwrite',s=>s.put(r));n++}else sk++}
@@ -390,7 +396,7 @@ function setup(k){ZV=null;S={k,ev:[],ctx:{},fps:240};const t=T[k];
 <div id=tl class=tw><div class="lbr tp" id=lbt></div><div class=trk id=trk><i class=tb></i><div id=ph></div></div><div class="lbr bt" id=lbb></div></div><div class=zrow><div class=lgd id=lg></div><div class=zc><button id=zo title="Zoom out">−</button><button id=zi title="Zoom in">+</button><button id=zf>Fit</button></div></div><input type=range id=zp min=0 max=1000 value=0 style="display:none;width:100%;padding:0;min-height:0">
 <div class=row><button id=b10>⏪10</button><button id=b1>◀ Frame</button><button id=f1>Frame ▶</button><button id=f10>10⏩</button><button class=p id=mk>Mark event</button><button id=fs>Fullscreen</button></div>
 <div class=mu id=st>Load a video. Arrow keys step frames (Shift = 10).</div><div id=evs class=card style="margin:10px 0"></div><div class=row><button id=un>Undo last</button><button class=p id=go>Calculate</button></div><div id=res></div>`;
- $('#bk').onclick=home;document.querySelectorAll('.opt').forEach(o=>o.onclick=()=>{o.parentNode.querySelectorAll('.opt').forEach(x=>x.classList.toggle('sel',x==o));const lg=$('#legg');if(lg&&o.parentNode.dataset.g=='type')lg.style.display=o.dataset.v=='Single-Leg'?'':'none'});$('#f').onchange=load;$('#fps').onchange=()=>{$('#cf').style.display=$('#fps').value==0?'':'none';upd()};$('#cf').oninput=upd;
+ $('#bk').onclick=home;document.querySelectorAll('.opt').forEach(o=>o.onclick=()=>{o.parentNode.classList.remove('miss');o.parentNode.querySelectorAll('.opt').forEach(x=>x.classList.toggle('sel',x==o));const lg=$('#legg');if(lg&&o.parentNode.dataset.g=='type')lg.style.display=o.dataset.v=='Single-Leg'?'':'none'});$('#f').onchange=load;$('#fps').onchange=()=>{$('#cf').style.display=$('#fps').value==0?'':'none';upd()};$('#cf').oninput=upd;
  holdBtn($('#b1'),-1);holdBtn($('#f1'),1);$('#b10').onclick=()=>step(-10);$('#f10').onclick=()=>step(10);if(PREF.fps&&![30,60,120,240,480].includes(PREF.fps)){$('#fps').value=0;$('#cf').style.display='';$('#cf').value=PREF.fps}
  $('#mk').onclick=mark;$('#un').onclick=()=>{S.ev.pop();evs()};$('#go').onclick=run;$('#fs').onclick=()=>$('#v').requestFullscreen?.();evs()}
 function ctxHtml(k){if(k=='dj')return'<label class=mu>Box <select id=box>'+[15,20,30,40,50].map(x=>`<option>${x}</option>`).join('')+'</select> cm</label> <input id=bc type=number placeholder="custom cm" style="width:110px">';
@@ -430,8 +436,10 @@ function drawTl(){const v=$('#v'),tl=$('#tl'),trk=$('#trk');if(!tl||!trk||!v||!v
  E.forEach((e,i)=>{const up=/take/i.test(label(i)),pos=X(e.mt);if(pos<0||pos>100)return;trk.insertAdjacentHTML('beforeend',`<i class="mv ${up?'ta':'ld'}" style="left:${PP(pos)}"></i>`);
   if(rs){if(up)top+=`<span class=ct style="left:${PP(pos)}"><b>T${(i+1)/2}</b></span>`}
   else top+=`<span class="${up?'ct':'cl'} ${pos<9?'l0':pos>91?'r0':''}" style="left:${PP(pos)}"><b>${label(i)}</b><small>fr ${e.fr} · ${e.mt.toFixed(3)} s</small></span>`});
- $('#lbt').innerHTML=top;$('#lbb').innerHTML=bot;
+ $('#lbt').innerHTML=top;$('#lbb').innerHTML=bot;stackLb();
  $('#lg').innerHTML='<span><i class="ln1" style="background:#00CFEA"></i>Takeoff</span><span><i class="ln1" style="background:#3478F6"></i>Landing</span><span><i class="bar1" style="background:#00CFEA"></i>Flight Phase</span>'+(gc?'<span><i class="bar1" style="background:#F5A623"></i>Ground Contact</span>':'');movePh()}
+function stackLb(){const t=$('#lbt');if(!t)return;t.style.height='';const sp=[...t.children].map(e=>({e,r:e.getBoundingClientRect()})).sort((a,b)=>a.r.left-b.r.left),ends=[];
+ sp.forEach(x=>{let row=0;while(ends[row]!=null&&x.r.left<ends[row]+8)row++;ends[row]=x.r.right;x.e.style.bottom=row*42+'px'});t.style.height=(40+Math.max(0,ends.length-1)*42)+'px'}
 function initTl(){const v=$('#v'),tl=$('#tl'),trk=$('#trk');let d=0;const sk=e=>{if(!v.duration)return;const r=trk.getBoundingClientRect(),[a,b]=vwin();v.pause();v.currentTime=a+Math.min(Math.max((e.clientX-r.left)/r.width,0),1)*(b-a)};
  tl.onpointerdown=e=>{d=1;tl.setPointerCapture(e.pointerId);sk(e)};tl.onpointermove=e=>{if(d)sk(e)};tl.onpointerup=()=>{d=0};v.ontimeupdate=()=>movePh();
  tl.addEventListener('wheel',e=>{e.preventDefault();const r=trk.getBoundingClientRect(),[a,b]=vwin(),t=a+(e.clientX-r.left)/r.width*(b-a);if(ZV&&Math.abs(e.deltaX)>Math.abs(e.deltaY)){const w=b-a,na=Math.min(Math.max(a+e.deltaX/r.width*w,0),v.duration-w);ZV=[na,na+w];zUpd();drawTl()}else zoom(e.deltaY>0?1.25:.8,t)},{passive:false});
@@ -453,12 +461,12 @@ function ctxVal(){const c={},k=S.k,q=g=>{const o=document.querySelector(`.opts[d
 function run(){const r=$('#res');try{if(!S.vid)throw 'Load a video first.';const fp=recFps();if(!(fp>0))throw 'Set a valid recording FPS.';
  if(S.ev.length<need())throw `Mark all ${need()} events first.`;const sc=scale(),t=S.ev.map(e=>e.mt*sc);
  const c=ctxVal(),res=calc(S.k,t,c);S.cur={id:Date.now()+'',ath:getAth(),alg:'kinetra-1.0',method:'manual frame selection',verify:hasR?'decoded frame timestamps':'reduced precision (no frame timestamps)',k:S.k,name:T[S.k].n,date:new Date().toISOString().slice(0,10),notes:'',fps:fp,scale:sc,ctx:c,res,frames:S.ev.map(e=>e.fr)};
- const s=sum(S.cur);r.innerHTML=`<div class=card><div class=mu>${s.m[0]}</div><div class=big>${s.m[1]} <small style="font-size:22px">${s.m[2]}</small></div>`+
+ const s=sum(S.cur),hc=['cmj','sj','rj1','rj2','dj'].includes(S.k)&&res.h!=null?res.h*100:null,wr=hc!=null&&isFinite(hc)&&(hc<8||hc>100)?`<div class=warn style="margin-top:12px">Unusual result (${hc.toFixed(1)} cm, flight ${Math.round(Math.sqrt(8*res.h/G)*1000)} ms). Typical range is about 8–100 cm. Check the takeoff and landing frames and the recording FPS before saving.</div>`:'';r.innerHTML=`<div class=card><div class=mu>${s.m[0]}</div><div class=big>${s.m[1]} <small style="font-size:22px">${s.m[2]}</small></div>`+
  (S.cur.res.hops?'<div class=bars>'+res.hops.map((h,i)=>`<div class="${res.sel.includes(i)?'s':''}" style="height:${h.r/Math.max(...res.hops.map(x=>x.r))*100}%" title="${h.r.toFixed(2)}"></div>`).join('')+'</div><table><tr><th>#</th><th>Contact</th><th>Flight</th><th>RSI</th></tr>'+res.hops.map((h,i)=>`<tr ${res.sel.includes(i)?'style="color:#00CFEA"':''}><td>${i+1}</td><td>${(h.c*1e3).toFixed(0)} ms</td><td>${(h.f*1e3).toFixed(0)} ms</td><td>${h.r.toFixed(2)}</td></tr>`).join('')+'</table>':'')+
- '<table>'+s.r.map(x=>`<tr><td class=mu>${x[0]}</td><td>${x[1]}</td></tr>`).join('')+`<tr><td class=mu>Recording FPS</td><td>${fp}</td></tr>${pRow(S.cur)}</table>${s.n?`<p class=mu>${s.n}</p>`:''}
+ '<table>'+s.r.map(x=>`<tr><td class=mu>${x[0]}</td><td>${x[1]}</td></tr>`).join('')+`<tr><td class=mu>Recording FPS</td><td>${fp}</td></tr>${pRow(S.cur)}</table>${wr}${s.n?`<p class=mu>${s.n}</p>`:''}
  <div class=row><input id=nm placeholder="Test name" value="${S.cur.name}"><input id=nt placeholder="Notes"><button class=p id=sv>Save</button><button id=sh>Share result</button></div></div>`;
  $('#sv').onclick=async()=>{S.cur.name=$('#nm').value;S.cur.notes=$('#nt').value;await tx('readwrite',s=>s.put(S.cur));$('#sv').textContent='Saved ✓';toast('Result saved')};
- $('#sh').onclick=()=>shareUI(S.cur)}catch(e){r.innerHTML=`<div class=warn>${e}</div>`}}
+ $('#sh').onclick=()=>shareUI(S.cur)}catch(e){r.innerHTML=`<div class=warn>${e}</div>`;const m=/^Select the (takeoff type|takeoff leg|arm movement)/.exec(e);if(m){const g=document.querySelector('.opts[data-g='+({'takeoff type':'type','takeoff leg':'leg','arm movement':'arm'}[m[1]])+']');if(g){g.classList.add('miss');g.scrollIntoView({block:'center',behavior:'smooth'})}}}}
 function card(x){const s=sum(x),c=document.createElement('canvas');c.width=1080;c.height=1920;const g=c.getContext('2d');
  g.fillStyle='#0B0E13';g.fillRect(0,0,1080,1920);g.fillStyle='#00CFEA';g.font='80px Draco,sans-serif';g.fillText('KINETRA',80,160);
  g.fillStyle='#fff';g.font='700 56px sans-serif';g.fillText(x.name.slice(0,30),80,520);g.fillStyle='#8995A5';g.font='36px sans-serif';g.fillText(s.m[0],80,600);
@@ -496,7 +504,7 @@ async function hist(){M.innerHTML='<div class=sk></div><div class=sk></div>';con
 const fv=(t,v)=>t=='dj'||t=='rsi'?v.toFixed(2)+' m/s':v.toFixed(1)+' cm';
 const PSEG=PCOL.map((x,i)=>`<i style="flex:${Math.min(x[0],100)-(i?PCOL[i-1][0]:0)};background:${x[1]}"></i>`).join(''),PLEG=PCOL.map((x,i)=>`<span><i class=bar1 style="background:${x[1]}"></i>${i?PCOL[i-1][0]+1:0}–${x[0]==Infinity?100:x[0]}</span>`).join('');
 const pRow=x=>{const t={cmj:'cmj',dj:'dj',rsi:'rsi'}[x.k];if(!t||pk(x)!=PK[t])return'';const p=pct(t,val(x));return`<tr><td class=mu>Percentile (est.)</td><td style="color:${pcol(p)};font-weight:700">${pl(p)}</td></tr>`};
-const pl=p=>p.lt?'<P10':p.gt?'P90+':'P'+Math.round(p.p);
+const pl=p=>p.lt?'&lt;P10':p.gt?'P90+':'P'+Math.round(p.p);
 const plab=k=>{const a=k.split('|');return a[1]+(a[2]!='-'?' · '+a[2]:'')+(a[3]!='-'?' · '+a[3]+' cm box':'')+(a[4]?' · Manual entry':'')};
 const byDate=(a,c)=>a.date<c.date?-1:a.date>c.date?1:a.id-c.id;
 const MO=['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'],fd=d=>{const x=new Date(d+'T00:00:00');return isNaN(x)?d:`${x.getDate()} ${MO[x.getMonth()]} ${x.getFullYear()}`};
