@@ -211,7 +211,7 @@ details.lg summary b{white-space:nowrap;font-size:15px}
 
 /* personal best tiles */
 .pbt{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 12px}.pbt button{min-height:36px;padding:6px 14px;font-size:13px}.pbt button.on{background:rgba(0,207,234,.14);border-color:#00CFEA;color:#00CFEA}
-.pc.pe{cursor:pointer}
+.pbp{font-size:14px;color:var(--tx);line-height:1.35}.pbp button{font-size:13px;min-height:36px;padding:6px 14px}.pbp span{font-size:14px;color:var(--tx)}.pbtt{font-size:16px;font-weight:700;color:var(--tx)}.pbp{box-sizing:border-box;grid-template-columns:minmax(0,1fr)}.pbp.big{max-width:520px;max-height:88vh;overflow:auto}.pbh{display:flex;justify-content:space-between;align-items:center;gap:10px}.pbq{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--bd)}.pbq>div{min-width:0}.pbq button{flex:none;min-height:36px;padding:6px 14px;font-size:13px}
 .pbs{position:fixed;inset:0;z-index:300;background:rgba(0,0,0,.62);display:flex;align-items:flex-end;justify-content:center}
 .pbp{width:100%;max-width:460px;background:#10151D;border:1px solid var(--bd);border-radius:18px 18px 0 0;padding:18px 18px calc(18px + env(safe-area-inset-bottom));display:grid;gap:12px}
 .pbp label{display:grid;gap:6px;font-size:12px;color:var(--mu);font-weight:600}.pbp select,.pbp input{width:100%;box-sizing:border-box}
@@ -823,16 +823,25 @@ const pbDef=()=>TO.map(t=>({t,leg:'Both legs',arms:HA(t)?'Hands on Hips':'-',box
 const pbKey=()=>'kpb_'+CUR,pbK=c=>[c.t,c.t=='rsi'?'Both legs':c.leg,HA(c.t)?c.arms:'-',c.t=='dj'?c.box:'-'].join('|');
 const pbLoad=()=>{try{const a=JSON.parse(localStorage.getItem(pbKey()));if(Array.isArray(a)&&a.length&&a.every(c=>TO.includes(c.t)))return a}catch(e){}return pbDef()};
 const pbSave=a=>{try{localStorage.setItem(pbKey(),JSON.stringify(a))}catch(e){}};
-let PBM=false;
-function pbSheet(i,cfg,after){const nw=i<0;let c=nw?{t:'cmj',leg:'Both legs',arms:'Hands on Hips',box:BENCH.box}:{...cfg[i]};const o=document.createElement('div');o.className='pbs';document.body.appendChild(o);
- const close=()=>o.remove();
- const draw=()=>{const sel=(id,l,v,op)=>`<label>${l}<select id=${id}${id=='pl'&&c.t=='rsi'?' disabled':''}>${op.map(x=>`<option${x==v?' selected':''}>${x}</option>`).join('')}</select></label>`;
-  o.innerHTML=`<div class=pbp role=dialog><div class=pt>${nw?'Add tile':'Edit tile'}</div><label>Test<select id=pt>${TO.map(t=>`<option value=${t}${t==c.t?' selected':''}>${TN[t]}</option>`).join('')}</select></label>${sel('pl','Legs',c.t=='rsi'?'Both legs':c.leg,['Both legs','Left leg','Right leg'])}${HA(c.t)?sel('pa','Arms',c.arms,['Hands on Hips','Arm Swing']):''}${c.t=='dj'?`<label>Box height (cm)<input id=pbx type=number min=0 step=1 value="${c.box}"></label>`:''}<div class=row style="margin-top:14px"><button id=ps>Save</button>${nw?'':'<button id=pr>Remove</button>'}<button id=pcx>Cancel</button></div></div>`;
-  $('#pt').onchange=e=>{const t=e.target.value;c={t,leg:c.leg,arms:HA(t)?(c.arms&&c.arms!='-'?c.arms:'Hands on Hips'):'-',box:t=='dj'?(c.box&&c.box!='-'?c.box:BENCH.box):'-'};draw()};
-  $('#pl').onchange=e=>{c.leg=e.target.value};const pa=$('#pa');if(pa)pa.onchange=e=>{c.arms=e.target.value};const bx=$('#pbx');if(bx)bx.oninput=e=>{c.box=e.target.value};
-  $('#pcx').onclick=close;o.onclick=e=>{if(e.target==o)close()};
-  const pr=$('#pr');if(pr)pr.onclick=()=>{if(cfg.length<2){toast('Keep at least one tile');return}cfg.splice(i,1);pbSave(cfg);close();after()};
-  $('#ps').onclick=()=>{if(c.t=='dj'&&!(+c.box>0)){toast('Enter a box height');return}if(c.t=='dj')c.box=+c.box;if(c.t=='rsi')c.leg='Both legs';const k=pbK(c);if(cfg.some((q,j)=>j!=i&&pbK(q)==k)){toast('This tile already exists');return}if(nw)cfg.push(c);else cfg[i]=c;pbSave(cfg);close();after()}};
+function pbSheet(cfg,b,after){const o=document.createElement('div');o.className='pbs';document.body.appendChild(o);const F={t:'',q:''};
+ const parse=k=>{const a=k.split('|');return{t:a[0],leg:a[1],arms:a[2],box:a[3]=='-'?'-':isNaN(+a[3])?a[3]:+a[3]}};
+ const close=()=>{o.remove();after()};
+ const draw=()=>{const have=new Set(cfg.map(pbK));
+  const all=Object.keys(b).filter(k=>k.split('|').length==4&&TO.includes(k.split('|')[0])).sort((x,y)=>TO.indexOf(x.split('|')[0])-TO.indexOf(y.split('|')[0])||(val(b[y])-val(b[x])));
+  const av=all.filter(k=>!have.has(k)&&(!F.t||k.split('|')[0]==F.t)&&(!F.q||(TN[k.split('|')[0]]+' '+plab(k)).toLowerCase().includes(F.q.toLowerCase())));
+  const vt=k=>fv(k.split('|')[0],val(b[k]));
+  o.innerHTML=`<div class="pbp big" role=dialog><div class=pbh><div class=pbtt>Edit personal bests</div><button id=pdn>Done</button></div>
+  <p class=pf2 style="margin:0">Each tile shows your best result for one test variant. Remove a tile or add any variant you have already tested.</p>
+  <div class=lm>On your profile (${cfg.length})</div>${cfg.map((c,i)=>{const k=pbK(c);return`<div class=pbq><div><span style="font-weight:600">${TN[c.t]}</span><div class=pf2>${plab(k)}${b[k]?' · '+vt(k):' · not tested yet'}</div></div><button data-rm=${i} aria-label="Remove">Remove</button></div>`}).join('')||'<p class=pf2>No tiles.</p>'}
+  <div class=lm>Add from your tests</div>
+  <div style="display:grid;gap:8px"><select id=pft><option value="">All tests</option>${TO.map(t=>`<option value=${t}${t==F.t?' selected':''}>${TN[t]}</option>`).join('')}</select><input id=pfq type=search placeholder="Search, e.g. left leg, arm swing" value="${hx2(F.q)}"></div>
+  ${av.map(k=>`<div class=pbq><div><span style="font-weight:600">${TN[k.split('|')[0]]}</span><div class=pf2>${plab(k)} · best ${vt(k)}</div></div><button data-add="${hx2(k)}">+ Add</button></div>`).join('')||`<p class=pf2>${all.length?'Nothing else matches.':'Complete a test to add it here.'}</p>`}
+  <div class=row style="margin-top:6px"><button id=prs>Reset to default</button></div></div>`;
+  $('#pdn').onclick=close;o.onclick=e=>{if(e.target==o)close()};
+  $('#pft').onchange=e=>{F.t=e.target.value;draw()};const q=$('#pfq');q.oninput=e=>{F.q=e.target.value;const pos=q.selectionStart;draw();const n=$('#pfq');n.focus();n.setSelectionRange(pos,pos)};
+  o.querySelectorAll('[data-rm]').forEach(bt=>bt.onclick=()=>{if(cfg.length<2){toast('Keep at least one tile');return}cfg.splice(+bt.dataset.rm,1);pbSave(cfg);draw()});
+  o.querySelectorAll('[data-add]').forEach(bt=>bt.onclick=()=>{cfg.push(parse(bt.dataset.add));pbSave(cfg);draw()});
+  $('#prs').onclick=()=>{const d=pbDef();cfg.splice(0,cfg.length,...d);try{localStorage.removeItem(pbKey())}catch(e){}draw()}};
  draw()}
 async function prof(){try{setINC(localStorage.getItem('kinc')!=='0')}catch(e){}S=null;M.innerHTML='<div class=pf><div class=sk style="height:64px"></div><div class=sk></div><div class=sk style="height:160px"></div></div>';
  const rs=await rsCur(),b=bests(rs),vr=rs.filter(okR);let nm=curNm();
@@ -842,9 +851,9 @@ async function prof(){try{setINC(localStorage.getItem('kinc')!=='0')}catch(e){}S
  const tileH=(c,i,x,k,ed)=>{const t=c.t,n=TN[t],u=t=='dj'||t=='rsi'?'m/s':'cm',at=ed?` data-pt=${i}`:'';
   if(!x)return`<div class="pc em${ed?' pe':''}"${at}><div class=pn>${n}</div><div class=pf2 style="margin-top:10px">${plab(k)}</div><div class=pf2 style="margin-top:6px">Not tested yet</div><button class=lk data-run=${t}>Run test →</button></div>`;
   const v=val(x);return`<div class="pc${ed?' pe':''}"${at}><div class=pn>${n}</div><div class=pv>${u=='cm'?v.toFixed(1):v.toFixed(2)}<small>${u}</small></div><div class=tag>PERSONAL BEST</div><div class=pd>${fd(x.date)}</div><div class=pf2>${plab(k)}${x.manual?' · manual entry':''}${t=='dj'?` · ${(x.res.h*100).toFixed(1)} cm · ${(x.res.contact*1e3).toFixed(0)} ms`:''}</div></div>`};
- let items;if(PBM)items=TO.map(t=>{const e=Object.entries(b).filter(([k])=>k.split('|')[0]==t).sort((a,c)=>val(c[1])-val(a[1]))[0];return{c:{t},i:-1,k:e?e[0]:'|'+t+'|||',x:e&&e[1]}});else items=cfg.map((c,i)=>{const k=pbK(c);return{c,i,k,x:b[k]}});
+ let items=cfg.map((c,i)=>{const k=pbK(c);return{c,i,k,x:b[k]}});
  items=items.map((q,n)=>({...q,n})).sort((a,c)=>(!a.x-!c.x)||(TO.indexOf(a.c.t)-TO.indexOf(c.c.t))||a.n-c.n);
- const pbH=`<div class=pbt><button id=pbb aria-pressed="${PBM}" class="${PBM?'on':''}">Show best</button>${PBM?'':'<button id=pba>+ Add tile</button>'}${!PBM&&!isDef?'<button id=pbr>Reset</button>':''}</div>${PBM?'<p class=pf2 style="margin:0 0 10px">Best result per test across all legs and arm variants.</p>':''}<div class=pg>${items.map(q=>PBM&&!q.x?tileH(q.c,-1,null,'|'+q.c.t+'|||',false).replace(/<div class=pf2 style="margin-top:10px">[^<]*<\/div>/,''):tileH(q.c,q.i,q.x,q.k,!PBM)).join('')}</div>`;
+ const pbH=`<div class=pg>${items.map(q=>tileH(q.c,q.i,q.x,q.k,false)).join('')}</div><div class=pbt style="margin:12px 0 0"><button id=pbe>Edit</button></div>`;
  const miss=t=>{const a=vr.filter(q=>q.k==t),need=(t=='sj'||t=='avj'?'Needs a double-leg result':'Needs a double-leg, Hands on Hips result')+(t=='dj'?' on a '+BENCH.box+' cm box':'');if(!a.length)return need;const f=[...new Set(a.map(q=>plab(pk(q))))].slice(0,3).join(' | '),lg=(t=='sj'||t=='avj')?0:a.filter(q=>!(q.ctx&&q.ctx.arms)).length;return need+`. Found: ${f}`+(lg?` · <a href="#" data-fix=${t} style="color:var(--cy)">set arm movement for ${lg} older result${lg>1?'s':''}</a>`:'')};
  const prow=([n,t])=>{const x=b[PK[t]];if(!x)return`<div class=pr3><div><div style="font-weight:600">${n}</div><div class=pf2>${miss(t)}</div></div><button class=lk data-run=${t} style="margin:0">Run test →</button></div>`;
   const p=pct(t,val(x));return`<div class=pr3><div><div style="font-weight:600">${n}</div><div class=pf2>${fv(t,val(x))}</div></div><div class=scw><div class=sc><div class=psc>${PSEG}</div><i class=mk data-t=${p.lt?0:p.p} style="background:${pcol(p)};box-shadow:0 0 0 1px ${pcol(p)}"></i></div><div class=tl2><span style="left:10%">P10</span><span style="left:50%">P50</span><span style="left:90%">P90</span></div></div><div class=pbig style="color:${pcol(p)}">${pl(p)}</div></div>`};
@@ -859,8 +868,7 @@ async function prof(){try{setINC(localStorage.getItem('kinc')!=='0')}catch(e){}S
 <div class=st>Performance level <span class=ii title="Percentiles are estimates (trained people or general population, chosen in Settings), using sex-specific provisional reference tables (male scale if sex is not specified), not Plyotic-specific norms. The Drop Jump table assumes a 30 cm box.">i</span></div><div class="pn2 lvg"><div><div class=pt>Summary</div>${lvH}</div><div><div class=pt>Percentile rankings</div>${[['Countermovement Jump','cmj'],['Squat Jump','sj'],['Approach Jump','avj'],['Drop Jump','dj'],['RSI 10/5','rsi']].map(prow).join('')}<p class=pf2 style="margin:8px 0 0;font-size:10.5px">Estimated percentiles · ${(isGen()?'General population, ':'Trained people, ')+(sx()[0]=='F'?'female scale':(getAth().sex=='Male'?'male scale':'male scale (default, sex not specified)'))}. Double-leg; CMJ, Drop Jump and RSI 10/5 with Hands on Hips. Not clinical or Plyotic-specific norms.</p><div class=lgd style="margin-top:10px;gap:12px">${PLEG}</div></div></div>
 </div>`;
  nameWire();M.querySelectorAll('[data-run]').forEach(x=>x.onclick=e=>{e.stopPropagation();goTest(x.dataset.run)});
- $('#pbb').onclick=()=>{PBM=!PBM;prof()};const pa=$('#pba');if(pa)pa.onclick=()=>pbSheet(-1,cfg,prof);const pr=$('#pbr');if(pr)pr.onclick=()=>{try{localStorage.removeItem(pbKey())}catch(e){}prof()};
- M.querySelectorAll('.pc[data-pt]').forEach(el=>el.onclick=()=>pbSheet(+el.dataset.pt,cfg,prof));
+ $('#pbe').onclick=()=>pbSheet(cfg,b,prof);
  M.querySelectorAll('[data-fix]').forEach(a=>a.onclick=async e=>{e.preventDefault();const t=a.dataset.fix,v=(prompt('Arm movement used in these older results: type "hips" for Hands on Hips or "swing" for Arm Swing')||'').toLowerCase(),arm=v.startsWith('h')?'Hands on Hips':v.startsWith('s')?'Arm Swing':null;if(!arm)return;for(const x of rs.filter(q=>q.k==t&&!(q.ctx&&q.ctx.arms))){x.ctx=x.ctx||{};x.ctx.arms=arm;await tx('readwrite',s=>s.put(x))}toast('Updated');prof()});
  requestAnimationFrame(()=>requestAnimationFrame(()=>{M.querySelectorAll('.mk').forEach(m=>m.style.left=m.dataset.t+'%');M.querySelectorAll('.rg').forEach(r=>r.style.strokeDasharray=r.dataset.d+' 213.6')}));}
 function nameWire(){athWire();uWire();const c=$('#inc');if(c)c.onchange=()=>{setINC(c.checked);try{localStorage.setItem('kinc',c.checked?'1':'0')}catch(e){}prof()};const i=$('#an');if(i)i.oninput=()=>{if(CUR!='me')setAth({name:i.value});else{try{localStorage.setItem('kn',i.value)}catch(e){}}}}
