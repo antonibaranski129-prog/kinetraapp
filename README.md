@@ -1,4 +1,4 @@
-# KINETRA
+# PLYOTIC
 
 PWA do analizy skoków i RSI z filmów slow motion. Wyniki zapisują się tylko na urządzeniu.
 
