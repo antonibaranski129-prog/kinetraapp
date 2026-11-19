@@ -161,7 +161,7 @@ main{animation:fi .28s ease both}
 @media(max-width:640px){
  header{position:sticky;top:0;z-index:20;background:#0B0E13;-webkit-backdrop-filter:none;backdrop-filter:none;padding:12px 16px;gap:0;border-bottom:1px solid rgba(37,46,59,.6)}
  header .logo{font-size:17px;letter-spacing:.24em}header .tag{display:none}
- nav{position:fixed;left:0;right:0;bottom:0;margin:0;width:100%;z-index:40;display:grid;grid-template-columns:repeat(4,1fr);gap:0;overflow:visible;background:rgba(14,19,26,.97);border-top:1px solid var(--bd);padding:6px 6px calc(6px + env(safe-area-inset-bottom,0px))}
+ nav{position:fixed;left:0;right:0;bottom:0;margin:0;width:100%;z-index:40;display:grid;grid-template-columns:repeat(5,1fr);gap:0;overflow:visible;background:rgba(14,19,26,.97);border-top:1px solid var(--bd);padding:6px 6px calc(6px + env(safe-area-inset-bottom,0px))}
  nav button,nav button.on{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;min-height:52px;padding:6px 2px;font-size:11px;font-weight:600;letter-spacing:.02em;background:none;border:0;border-radius:12px;color:var(--mu);white-space:nowrap}
  nav button.on{color:var(--lime);background:rgba(0,207,234,.09)}
  nav button.on:after,nav button:after{display:none!important}
@@ -198,9 +198,19 @@ main{animation:fi .28s ease both}
 
 .sh{margin:0 0 6px}.shd{font-size:12px;font-weight:700;letter-spacing:.14em;color:var(--mu)}.shv{font-size:44px;font-weight:700;line-height:1.1;letter-spacing:-.02em}.shv small{font-size:18px;font-weight:600;margin-left:2px;letter-spacing:0}
 .shr{display:flex;align-items:center;gap:8px;font-size:13px;margin-top:6px}.shr i{width:10px;height:10px;border-radius:50%;flex:none}.shr span{flex:1;min-width:0;color:var(--mu)}.shr b{font-size:17px;white-space:nowrap}.shr small{font-size:12px;color:var(--mu);font-weight:500}
+
+/* history tab */
+details.lg{background:var(--card);border:1px solid var(--bd);border-radius:14px;margin-bottom:8px;overflow:hidden}
+details.lg summary{list-style:none;display:flex;align-items:center;gap:10px;padding:12px 14px;cursor:pointer;color:var(--tx);min-height:48px}details.lg summary::-webkit-details-marker{display:none}
+details.lg summary:after{content:"";width:8px;height:8px;border-right:2px solid var(--mu);border-bottom:2px solid var(--mu);transform:rotate(45deg);margin:0 2px 4px 2px;transition:transform .15s;flex:none}details.lg[open] summary:after{transform:rotate(-135deg);margin-bottom:-2px}
+.ld{width:84px;flex:none;font-size:11.5px;font-weight:600;color:var(--mu);letter-spacing:.04em}.ln{flex:1;min-width:0;font-size:13.5px;font-weight:600;line-height:1.3}.ln em{font-style:normal;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--mu);border:1px solid var(--bd);border-radius:99px;padding:1px 6px;margin-left:4px}
+details.lg summary b{white-space:nowrap;font-size:15px}
+.lb{padding:2px 14px 14px;border-top:1px solid var(--bd)}.lr{display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px solid rgba(37,46,59,.6);font-size:13.5px}.lr span{color:var(--mu)}.lr b{text-align:right;font-weight:600}
+.lm{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--mu);margin:16px 0 4px}
+.lt{font-variant-numeric:tabular-nums;font-size:12.5px}.lth,.ltr{display:grid;grid-template-columns:28px 1fr 1fr 1fr 52px;gap:6px;padding:6px 8px;border-radius:8px}.lth{color:var(--mu);font-weight:700;font-size:11px;letter-spacing:.06em;text-transform:uppercase}.ltr{opacity:.55}.ltr.sl{opacity:1;background:rgba(0,207,234,.08);font-weight:600}
 </style></head><body>
 <header><span class="logo">PLYOTIC</span><span class="tag">Measure. Analyze. Improve.</span>
-<nav><button data-v="new" class="on">New Test</button><button data-v="fr">Freshness</button><button data-v="prof"><span class=hd>Athlete </span>Profile</button><button data-v="hist">Progression</button></nav><button class=gear data-v="set" aria-label="Settings" title="Settings"><svg width=22 height=22 viewBox="0 0 24 24" fill=none stroke=currentColor stroke-width=1.8 stroke-linecap=round stroke-linejoin=round><circle cx=12 cy=12 r=3.2 /><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z" /></svg></button></header>
+<nav><button data-v="new" class="on">New Test</button><button data-v="fr">Freshness</button><button data-v="prof"><span class=hd>Athlete </span>Profile</button><button data-v="hist">Progression</button><button data-v="log">History</button></nav><button class=gear data-v="set" aria-label="Settings" title="Settings"><svg width=22 height=22 viewBox="0 0 24 24" fill=none stroke=currentColor stroke-width=1.8 stroke-linecap=round stroke-linejoin=round><circle cx=12 cy=12 r=3.2 /><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z" /></svg></button></header>
 <div id="ob" class="ob on"><div class="sk" style="width:200px;height:12px;border-radius:6px;margin:45vh auto 0"></div></div>
 <div id="ab" style="display:none"></div> <main id="m"></main>
 <script>
@@ -714,6 +724,40 @@ const dcol=d=>d>0?'#3DDC84':d<0?'#EF4444':'#F4F7FB';
 const shHtml=(d,ps,u,dec,multi,none)=>{if(!d)return none||'';const dt=new Date(d+'T00:00:00').toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'}).toUpperCase();if(!ps.length)return'';
  if(!multi)return`<div class=shd>${dt}</div><div class=shv style="color:${ps[0].c}">${ps.map(q=>q.v.toFixed(dec)).join(' · ')} <small>${u}</small></div>`;
  return`<div class=shd>${dt}</div>`+ps.map(p=>`<div class=shr><i style="background:${p.c}"></i><span>${hx2(p.l)}</span><b>${p.v.toFixed(dec)} <small>${u}</small></b></div>`).join('')};
+
+let LS={t:'',v:'',n:30};
+async function logView(){M.innerHTML='<div class=sk></div><div class=sk></div>';S=null;const raw=(await rsCur()).map(x=>x.k=='sp'?{...x,k:(x.ctx&&x.ctx.mode=='Flying Sprint')?'spf':'sps'}:x).sort((a,c)=>a.date<c.date?1:a.date>c.date?-1:String(c.id)<String(a.id)?-1:1);
+ const evl=(k,i)=>{const t=T[k]||{};return t.e?t.e[i]||('Mark '+(i+1)):k=='rsi'?(i==0?'Landing 0':i%2?'Takeoff '+(i+1)/2:'Landing '+i/2):'Mark '+(i+1)};
+ const tests=[...new Set(raw.map(tshort))];
+ if(LS.t&&!tests.includes(LS.t))LS.t='';
+ const inT=raw.filter(x=>!LS.t||tshort(x)==LS.t),vars=[...new Set(inT.map(vlab))];if(LS.v&&!vars.includes(LS.v))LS.v='';
+ const list=inT.filter(x=>!LS.v||vlab(x)==LS.v);
+ const row=(a,b)=>`<div class=lr><span>${a}</span><b>${b}</b></div>`;
+ const body=x=>{let m,r=[],n='';try{const q=sum(x);m=q.m;r=q.r;n=q.n||''}catch(e){return'<p class=pf2>This result cannot be displayed.</p>'}
+  const c=x.ctx||{},fr=Array.isArray(x.frames)?x.frames:[],a=x.ath||{};
+  let h=row('Test',hx2(T[x.k]?T[x.k].n:tshort(x)))+row('Variant',hx2(vlab(x))+(x.manual?' · Manual entry':''))+row(hx2(m[0]),hx2(m[1])+' '+hx2(m[2]))+r.map(q=>row(hx2(q[0]),hx2(q[1]))).join('');
+  if(c.leg&&!r.some(q=>/leg/i.test(q[0])))h+=row('Legs',hx2(c.leg));if(c.arms&&!r.some(q=>/arms/i.test(q[0])))h+=row('Arms',hx2(c.arms));if(c.type)h+=row('Takeoff type',hx2(c.type));if(c.box&&!r.some(q=>/box/i.test(q[0])))h+=row('Box height',hx2(c.box)+' cm');
+  h+=row('Date',hx2(x.date))+row('Recording FPS',x.fps?hx2(x.fps):'–');
+  if(fr.length)h+=`<div class=lm>Marked frames</div>`+fr.map((f,i)=>row(hx2(evl(x.k,i)),'frame '+hx2(f))).join('');
+  const ah=[a.sex,a.height?a.height+' cm':'',a.weight?a.weight+' kg':'',a.birthYear?'b. '+a.birthYear:''].filter(Boolean).join(' · ');
+  if(ah)h+=row('Athlete at test time',hx2(ah));
+  if(x.method)h+=row('Method',hx2(x.method));if(x.verify)h+=row('Verification',hx2(x.verify));if(x.alg)h+=row('Algorithm',hx2(x.alg));
+  if(x.notes)h+=row('Notes',hx2(x.notes));
+  const hp=x.res&&x.res.hops;
+  if(hp&&hp.length){const sl=new Set(x.res.sel||[]);h+=`<div class=lm>All hops</div><div class=lt><div class=lth><span>#</span><span>Contact</span><span>Flight</span><span>Height</span><span>RSI</span></div>${hp.map((q,i)=>`<div class="ltr${sl.has(i)?' sl':''}"><span>${i+1}</span><span>${(q.c*1e3).toFixed(0)} ms</span><span>${(q.f*1e3).toFixed(0)} ms</span><span>${(q.h*100).toFixed(1)} cm</span><span>${q.r.toFixed(2)}</span></div>`).join('')}</div><p class=pf2 style="margin:6px 0 0">Highlighted hops are the ones counted in the score.</p>`}
+  if(n)h+=`<p class=pf2 style="margin:10px 0 0">${hx2(n)}</p>`;
+  h+=`<div class=row style="margin-top:12px"><button data-e=${x.id}>Edit</button><button data-v=${x.id}>${x.invalid?'Restore':'Void'}</button><button data-d=${x.id}>Delete</button></div>`;return h};
+ const sh=list.slice(0,LS.n);
+ M.innerHTML=`<h2>History</h2><div style="display:grid;gap:8px;margin-bottom:10px"><select id=lt style="width:100%;box-sizing:border-box"><option value="">All tests</option>${tests.map(t=>`<option${t==LS.t?' selected':''}>${hx2(t)}</option>`).join('')}</select><select id=lv style="width:100%;box-sizing:border-box"><option value="">All variants</option>${vars.map(v=>`<option value="${hx2(v)}"${v==LS.v?' selected':''}>${hx2(v)}</option>`).join('')}</select></div>
+ <p class=pf2 style="margin:0 0 10px">${list.length} ${list.length==1?'result':'results'}${LS.t||LS.v?' (filtered)':''}</p>
+ ${sh.map(x=>{let v='';try{const q=sum(x);v=q.m[1]+' '+q.m[2]}catch(e){}return`<details class=lg><summary><span class=ld>${fd(x.date)}</span><span class=ln${x.invalid?' style="text-decoration:line-through;opacity:.5"':''}>${hx2(vlab(x))}${x.manual?' <em>manual</em>':''}</span><b>${hx2(v)}</b></summary><div class=lb data-i=${x.id}></div></details>`}).join('')||'<div class="card mu">No saved tests match.</div>'}
+ ${list.length>sh.length?'<button id=lmore style="width:100%;margin-top:6px">Show more</button>':''}`;
+ $('#lt').onchange=e=>{LS.t=e.target.value;LS.v='';LS.n=30;logView()};$('#lv').onchange=e=>{LS.v=e.target.value;LS.n=30;logView()};
+ const mo=$('#lmore');if(mo)mo.onclick=()=>{LS.n+=30;logView()};
+ M.querySelectorAll('details.lg').forEach(d=>d.addEventListener('toggle',()=>{const b=d.querySelector('.lb');if(!d.open||b.dataset.done)return;const x=raw.find(q=>String(q.id)==b.dataset.i);if(!x)return;b.innerHTML=body(x);b.dataset.done=1;
+  b.querySelectorAll('[data-v]').forEach(bt=>bt.onclick=async()=>{x.invalid=!x.invalid;await tx('readwrite',s=>s.put(x));logView()});
+  b.querySelectorAll('[data-d]').forEach(bt=>bt.onclick=async()=>{if(!confirm('Delete this result?'))return;tomb('r',aidOf(x),x.id);await tx('readwrite',s=>s.delete(String(x.id)));logView()});
+  b.querySelectorAll('[data-e]').forEach(bt=>bt.onclick=async()=>{x.name=prompt('Name',x.name)??x.name;x.notes=prompt('Notes',x.notes)??x.notes;x.date=prompt('Date (YYYY-MM-DD)',x.date)??x.date;await tx('readwrite',s=>s.put(x));logView()})}))}
 async function hist(){M.innerHTML='<div class=sk></div><div class=sk></div>';const raw=await rsCur(),all=raw.filter(x=>!x.invalid).map(x=>x.k=='sp'?{...x,k:(x.ctx&&x.ctx.mode=='Flying Sprint')?'spf':'sps'}:x);S=null;
  const mk=x=>{try{const q=sum(x);return{v:+q.m[1],d:x.date,t:tms(x.date),dec:(q.m[1].split('.')[1]||'').length,u:q.m[2],x}}catch(e){return null}};
  const vmap=list=>{const m={};list.forEach(x=>{const p=mk(x);if(!p)return;const l=vlab(x);(m[l]=m[l]||{l,r:trank(x),pts:[]}).pts.push(p)});return Object.values(m).sort((a,b)=>a.r-b.r||(a.l<b.l?-1:1)).map((q,i)=>{q.pts.sort((a,b)=>a.t-b.t||a.x.id-b.x.id);q.c=VC[i%VC.length];q.dec=q.pts[0].dec;q.u=q.pts[0].u;return q})};
@@ -790,10 +834,10 @@ async function prof(){try{setINC(localStorage.getItem('kinc')!=='0')}catch(e){}S
  requestAnimationFrame(()=>requestAnimationFrame(()=>{M.querySelectorAll('.mk').forEach(m=>m.style.left=m.dataset.t+'%');M.querySelectorAll('.rg').forEach(r=>r.style.strokeDasharray=r.dataset.d+' 213.6')}));}
 function nameWire(){athWire();uWire();const c=$('#inc');if(c)c.onchange=()=>{setINC(c.checked);try{localStorage.setItem('kinc',c.checked?'1':'0')}catch(e){}prof()};const i=$('#an');if(i)i.oninput=()=>{if(CUR!='me')setAth({name:i.value});else{try{localStorage.setItem('kn',i.value)}catch(e){}}}}
 const setTab=t=>document.querySelectorAll('nav button,.gear').forEach(x=>x.classList.toggle('on',x.dataset.v==t)),curTab=()=>{const b=document.querySelector('nav button.on,.gear.on');return b?b.dataset.v:'new'};
-async function nav(t){setTab(t);if(coachOn()&&CUR=='me'&&['new','prof','hist'].includes(t)){const r=await rosterAll();if(r.length)await switchAth(r[0].id);else{renderAB(t);coachEmpty();return}}
- ({new:home,fr:fresh,prof:prof,hist:hist,set:settings})[t]();renderAB(t)}
+async function nav(t){setTab(t);if(coachOn()&&CUR=='me'&&['new','prof','hist','log'].includes(t)){const r=await rosterAll();if(r.length)await switchAth(r[0].id);else{renderAB(t);coachEmpty();return}}
+ ({new:home,fr:fresh,prof:prof,hist:hist,log:logView,set:settings})[t]();renderAB(t)}
 document.querySelectorAll('nav button,.gear').forEach(b=>b.onclick=()=>nav(b.dataset.v));
-{const NI={new:'<path d="M13 2 4 14h7l-1 8 9-12h-7z"/>',fr:'<path d="M3 12h4l2-6 4 12 2-6h6"/>',prof:'<circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/>',hist:'<path d="M4 19V5M4 19h16M8 15l4-5 3 3 5-7"/>'};document.querySelectorAll('nav button').forEach(b=>{const p=NI[b.dataset.v];if(p&&!b.querySelector('.ni'))b.insertAdjacentHTML('afterbegin','<svg class=ni viewBox="0 0 24 24" aria-hidden=true>'+p+'</svg>')})}
+{const NI={new:'<path d="M13 2 4 14h7l-1 8 9-12h-7z"/>',fr:'<path d="M3 12h4l2-6 4 12 2-6h6"/>',prof:'<circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/>',hist:'<path d="M4 19V5M4 19h16M8 15l4-5 3 3 5-7"/>',log:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>'};document.querySelectorAll('nav button').forEach(b=>{const p=NI[b.dataset.v];if(p&&!b.querySelector('.ni'))b.insertAdjacentHTML('afterbegin','<svg class=ni viewBox="0 0 24 24" aria-hidden=true>'+p+'</svg>')})}
 try{navigator.storage&&navigator.storage.persist&&navigator.storage.persist()}catch(e){}
 
 /* tap highlight v1 */
