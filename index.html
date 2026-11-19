@@ -203,11 +203,11 @@ main{animation:fi .28s ease both}
 details.lg{background:var(--card);border:1px solid var(--bd);border-radius:14px;margin-bottom:8px;overflow:hidden}
 details.lg summary{list-style:none;display:flex;align-items:center;gap:10px;padding:12px 14px;cursor:pointer;color:var(--tx);min-height:48px}details.lg summary::-webkit-details-marker{display:none}
 details.lg summary:after{content:"";width:8px;height:8px;border-right:2px solid var(--mu);border-bottom:2px solid var(--mu);transform:rotate(45deg);margin:0 2px 4px 2px;transition:transform .15s;flex:none}details.lg[open] summary:after{transform:rotate(-135deg);margin-bottom:-2px}
-.ld{width:84px;flex:none;font-size:11.5px;font-weight:600;color:var(--mu);letter-spacing:.04em}.ln{flex:1;min-width:0;font-size:13.5px;font-weight:600;line-height:1.3}.ln em{font-style:normal;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--mu);border:1px solid var(--bd);border-radius:99px;padding:1px 6px;margin-left:4px}
+.hld{width:84px;flex:none;font-size:11.5px;font-weight:600;color:var(--mu);letter-spacing:.04em}.hln{flex:1;min-width:0;font-size:13.5px;font-weight:600;line-height:1.3}.hln em{font-style:normal;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--mu);border:1px solid var(--bd);border-radius:99px;padding:1px 6px;margin-left:4px}
 details.lg summary b{white-space:nowrap;font-size:15px}
-.lb{padding:2px 14px 14px;border-top:1px solid var(--bd)}.lr{display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px solid rgba(37,46,59,.6);font-size:13.5px}.lr span{color:var(--mu)}.lr b{text-align:right;font-weight:600}
-.lm{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--mu);margin:16px 0 4px}
-.lt{font-variant-numeric:tabular-nums;font-size:12.5px}.lth,.ltr{display:grid;grid-template-columns:28px 1fr 1fr 1fr 52px;gap:6px;padding:6px 8px;border-radius:8px}.lth{color:var(--mu);font-weight:700;font-size:11px;letter-spacing:.06em;text-transform:uppercase}.ltr{opacity:.55}.ltr.sl{opacity:1;background:rgba(0,207,234,.08);font-weight:600}
+.hlb{padding:2px 14px 14px;border-top:1px solid var(--bd)}.hlr{display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px solid rgba(37,46,59,.6);font-size:13.5px}.hlr span{color:var(--mu)}.hlr b{text-align:right;font-weight:600}
+.hlm{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--mu);margin:16px 0 4px}
+.hlt{font-variant-numeric:tabular-nums;font-size:12.5px}.hlth,.hltr{display:grid;grid-template-columns:28px 1fr 1fr 1fr 52px;gap:6px;padding:6px 8px;border-radius:8px}.hlth{color:var(--mu);font-weight:700;font-size:11px;letter-spacing:.06em;text-transform:uppercase}.hltr{opacity:.55}.hltr.sl{opacity:1;background:rgba(0,207,234,.08);font-weight:600}
 
 /* personal best tiles */
 .pbt{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 12px}.pbt button{min-height:36px;padding:6px 14px;font-size:13px}.pbt button.on{background:rgba(0,207,234,.14);border-color:#00CFEA;color:#00CFEA}
@@ -742,29 +742,29 @@ async function logView(){M.innerHTML='<div class=sk></div><div class=sk></div>';
  if(LS.t&&!tests.includes(LS.t))LS.t='';
  const inT=raw.filter(x=>!LS.t||tshort(x)==LS.t),vars=[...new Set(inT.map(vlab))];if(LS.v&&!vars.includes(LS.v))LS.v='';
  const list=inT.filter(x=>!LS.v||vlab(x)==LS.v);
- const row=(a,b)=>`<div class=lr><span>${a}</span><b>${b}</b></div>`;
+ const row=(a,b)=>`<div class=hlr><span>${a}</span><b>${b}</b></div>`;
  const body=x=>{let m,r=[],n='';try{const q=sum(x);m=q.m;r=q.r;n=q.n||''}catch(e){return'<p class=pf2>This result cannot be displayed.</p>'}
   const c=x.ctx||{},fr=Array.isArray(x.frames)?x.frames:[],a=x.ath||{};
   let h=row('Test',hx2(T[x.k]?T[x.k].n:tshort(x)))+row('Variant',hx2(vlab(x))+(x.manual?' · Manual entry':''))+row(hx2(m[0]),hx2(m[1])+' '+hx2(m[2]))+r.map(q=>row(hx2(q[0]),hx2(q[1]))).join('');
   if(c.leg&&!r.some(q=>/leg/i.test(q[0])))h+=row('Legs',hx2(c.leg));if(c.arms&&!r.some(q=>/arms/i.test(q[0])))h+=row('Arms',hx2(c.arms));if(c.type)h+=row('Takeoff type',hx2(c.type));if(c.box&&!r.some(q=>/box/i.test(q[0])))h+=row('Box height',hx2(c.box)+' cm');
   h+=row('Date',hx2(x.date))+row('Recording FPS',x.fps?hx2(x.fps):'–');
-  if(fr.length&&x.k!='rsi')h+=`<div class=lm>Marked frames</div>`+fr.map((f,i)=>row(hx2(evl(x.k,i)),'frame '+hx2(f))).join('');
+  if(fr.length&&x.k!='rsi')h+=`<div class=hlm>Marked frames</div>`+fr.map((f,i)=>row(hx2(evl(x.k,i)),'frame '+hx2(f))).join('');
   const ah=[a.sex,a.height?a.height+' cm':'',a.weight?a.weight+' kg':'',a.birthYear?'b. '+a.birthYear:''].filter(Boolean).join(' · ');
   if(ah)h+=row('Athlete at test time',hx2(ah));
   if(x.method)h+=row('Method',hx2(x.method));if(x.verify)h+=row('Verification',hx2(x.verify));if(x.alg)h+=row('Algorithm',hx2(x.alg));
   if(x.notes)h+=row('Notes',hx2(x.notes));
   const hp=x.res&&x.res.hops;
-  if(hp&&hp.length){const sl=new Set(x.res.sel||[]);h+=`<div class=lm>All hops</div><div class=lt><div class=lth><span>#</span><span>Contact</span><span>Flight</span><span>Height</span><span>RSI</span></div>${hp.map((q,i)=>`<div class="ltr${sl.has(i)?' sl':''}"><span>${i+1}</span><span>${(q.c*1e3).toFixed(0)} ms</span><span>${(q.f*1e3).toFixed(0)} ms</span><span>${(q.h*100).toFixed(1)} cm</span><span>${q.r.toFixed(2)}</span></div>`).join('')}</div><p class=pf2 style="margin:6px 0 0">Highlighted hops are the ones counted in the score.</p>`}
+  if(hp&&hp.length){const sl=new Set(x.res.sel||[]);h+=`<div class=hlm>All hops</div><div class=hlt><div class=hlth><span>#</span><span>Contact</span><span>Flight</span><span>Height</span><span>RSI</span></div>${hp.map((q,i)=>`<div class="hltr${sl.has(i)?' sl':''}"><span>${i+1}</span><span>${(q.c*1e3).toFixed(0)} ms</span><span>${(q.f*1e3).toFixed(0)} ms</span><span>${(q.h*100).toFixed(1)} cm</span><span>${q.r.toFixed(2)}</span></div>`).join('')}</div><p class=pf2 style="margin:6px 0 0">Highlighted hops are the ones counted in the score.</p>`}
   if(n)h+=`<p class=pf2 style="margin:10px 0 0">${hx2(n)}</p>`;
   h+=`<div class=row style="margin-top:12px"><button data-e=${x.id}>Edit</button><button data-v=${x.id}>${x.invalid?'Restore':'Void'}</button><button data-d=${x.id}>Delete</button></div>`;return h};
  const sh=list.slice(0,LS.n);
  M.innerHTML=`<h2>History</h2><div style="display:grid;gap:8px;margin-bottom:10px"><select id=lt style="width:100%;box-sizing:border-box"><option value="">All tests</option>${tests.map(t=>`<option${t==LS.t?' selected':''}>${hx2(t)}</option>`).join('')}</select><select id=lv style="width:100%;box-sizing:border-box"><option value="">All variants</option>${vars.map(v=>`<option value="${hx2(v)}"${v==LS.v?' selected':''}>${hx2(v)}</option>`).join('')}</select></div>
  <p class=pf2 style="margin:0 0 10px">${list.length} ${list.length==1?'result':'results'}${LS.t||LS.v?' (filtered)':''}</p>
- ${sh.map(x=>{let v='';try{const q=sum(x);v=q.m[1]+' '+q.m[2]}catch(e){}return`<details class=lg><summary><span class=ld>${fd(x.date)}</span><span class=ln${x.invalid?' style="text-decoration:line-through;opacity:.5"':''}>${hx2(vlab(x))}${x.manual?' <em>manual</em>':''}</span><b>${hx2(v)}</b></summary><div class=lb data-i=${x.id}></div></details>`}).join('')||'<div class="card mu">No saved tests match.</div>'}
+ ${sh.map(x=>{let v='';try{const q=sum(x);v=q.m[1]+' '+q.m[2]}catch(e){}return`<details class=lg><summary><span class=hld>${fd(x.date)}</span><span class=hln${x.invalid?' style="text-decoration:line-through;opacity:.5"':''}>${hx2(vlab(x))}${x.manual?' <em>manual</em>':''}</span><b>${hx2(v)}</b></summary><div class=hlb data-i=${x.id}></div></details>`}).join('')||'<div class="card mu">No saved tests match.</div>'}
  ${list.length>sh.length?'<button id=lmore style="width:100%;margin-top:6px">Show more</button>':''}`;
  $('#lt').onchange=e=>{LS.t=e.target.value;LS.v='';LS.n=30;logView()};$('#lv').onchange=e=>{LS.v=e.target.value;LS.n=30;logView()};
  const mo=$('#lmore');if(mo)mo.onclick=()=>{LS.n+=30;logView()};
- M.querySelectorAll('details.lg').forEach(d=>d.addEventListener('toggle',()=>{const b=d.querySelector('.lb');if(!d.open||b.dataset.done)return;const x=raw.find(q=>String(q.id)==b.dataset.i);if(!x)return;b.innerHTML=body(x);b.dataset.done=1;
+ M.querySelectorAll('details.lg').forEach(d=>d.addEventListener('toggle',()=>{const b=d.querySelector('.hlb');if(!d.open||b.dataset.done)return;const x=raw.find(q=>String(q.id)==b.dataset.i);if(!x)return;b.innerHTML=body(x);b.dataset.done=1;
   b.querySelectorAll('[data-v]').forEach(bt=>bt.onclick=async()=>{x.invalid=!x.invalid;await tx('readwrite',s=>s.put(x));logView()});
   b.querySelectorAll('[data-d]').forEach(bt=>bt.onclick=async()=>{if(!confirm('Delete this result?'))return;tomb('r',aidOf(x),x.id);await tx('readwrite',s=>s.delete(String(x.id)));logView()});
   b.querySelectorAll('[data-e]').forEach(bt=>bt.onclick=async()=>{x.name=prompt('Name',x.name)??x.name;x.notes=prompt('Notes',x.notes)??x.notes;x.date=prompt('Date (YYYY-MM-DD)',x.date)??x.date;await tx('readwrite',s=>s.put(x));logView()})}))}
