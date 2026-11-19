@@ -187,6 +187,13 @@ main{animation:fi .28s ease both}
 .sb.sf{display:inline-flex;align-items:center;gap:4px;padding:8px 12px 8px 8px}#f1.sf{padding:8px 8px 8px 12px}
 .row.stp{flex-wrap:nowrap;justify-content:space-between;margin-bottom:0}.row.stp .sb{flex:0 0 auto}
 #v{pointer-events:none;-webkit-touch-callout:none}
+
+/* progression v2 */
+.ch2w{width:100%;touch-action:pan-y}.ch2w svg{display:block}
+.cmpl{display:flex;flex-direction:column;gap:6px;margin-top:12px}
+.cmpr{display:flex;align-items:center;gap:10px;width:100%;text-align:left;padding:10px 12px;min-height:44px;background:var(--s2,#181F2A);border:1px solid var(--bd);border-radius:12px}
+.cmpr i{width:12px;height:12px;border-radius:50%;flex:none}.cmpr .cn{flex:1;min-width:0;font-size:13px;font-weight:600;line-height:1.25}.cmpr .cv{font-weight:700;white-space:nowrap}.cmpr .cv small{color:var(--mu);font-weight:500}.cmpr .cd{min-width:56px;text-align:right;font-weight:700;font-size:13px}.cmpr.off{opacity:.4}.cmpr.off i{background:transparent!important;border:2px solid var(--mu)}
+#hm,#hr,#ct{width:100%;display:flex;flex-wrap:nowrap}#hm button,#hr button,#ct button{flex:1 1 0;min-width:0;padding:8px 4px}#ct button{font-size:12px;line-height:1.2}
 </style></head><body>
 <header><span class="logo">PLYOTIC</span><span class="tag">Measure. Analyze. Improve.</span>
 <nav><button data-v="new" class="on">New Test</button><button data-v="fr">Freshness</button><button data-v="prof"><span class=hd>Athlete </span>Profile</button><button data-v="hist">Progression</button></nav><button class=gear data-v="set" aria-label="Settings" title="Settings"><svg width=22 height=22 viewBox="0 0 24 24" fill=none stroke=currentColor stroke-width=1.8 stroke-linecap=round stroke-linejoin=round><circle cx=12 cy=12 r=3.2 /><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z" /></svg></button></header>
@@ -672,22 +679,58 @@ async function accountUI(){const el=$('#acc');if(!el)return;if(!authService.enab
  $('#aic').onclick=async()=>{const m=$('#acd');m.textContent='Creating…';try{await syncAll();const c=await authService.client(),r=await c.rpc('create_invite',{p_athlete_id:se.user.id});if(r.error)throw r.error;m.innerHTML=`Your code: <b style="font-size:22px;letter-spacing:.1em;color:var(--lime)">${hx2(r.data)}</b><br>Valid for 7 days, works once.`}catch(e){m.textContent=String(e.message||e)}};
  try{const c=await authService.client(),r=await c.from('coach_links').select('*').eq('athlete_id',se.user.id);if(r.error)throw r.error;const l=r.data||[];$('#acl').innerHTML=l.length?'<div class=pt style="margin-top:14px">Your coaches</div>'+l.map(k=>`<div class=frs style="margin-top:8px"><span>${hx2(k.coach_label||'Coach')} <span class=pf2>· ${k.status=='active'?'has access':'revoked'}</span></span>${k.status=='active'?`<button data-rv="${k.coach_id}">Revoke</button>`:''}</div>`).join(''):'';
   M.querySelectorAll('[data-rv]').forEach(b=>b.onclick=async()=>{const r2=await c.from('coach_links').update({status:'revoked'}).eq('athlete_id',se.user.id).eq('coach_id',b.dataset.rv);if(r2.error){toast(r2.error.message);return}toast('Access revoked');accountUI()})}catch(e){}}
+let HS={mode:'s',rg:'y',ct:'j',hv:'',off:{}};
+const VC=['#00CFEA','#FFC83D','#3D8BFF','#FF6B8A','#7CE08A','#B48CFF','#FF9F43','#C7D0DC'],RGN={w:7,m:30,y:365,a:0},RGL={w:'Week',m:'Month',y:'Year',a:'All'},RGP={w:'previous week',m:'previous month',y:'previous year'},DAY=864e5;
+const CATS=[{id:'j',n:'CMJ · SJ · Approach',f:x=>x.k=='cmj'||x.k=='sj'||x.k.startsWith('rj')},{id:'d',n:'Drop Jump',f:x=>x.k=='dj'},{id:'r',n:'RSI 10/5',f:x=>x.k=='rsi'}];
+const tshort=x=>x.k=='cmj'?'CMJ':x.k=='sj'?'SJ':x.k.startsWith('rj')?'Approach':x.k=='dj'?'DJ':x.k=='rsi'?'RSI 10/5':gk(x).base,trank=x=>x.k=='cmj'?0:x.k=='sj'?1:x.k.startsWith('rj')?2:x.k=='dj'?3:x.k=='rsi'?4:5;
+const vlab=x=>{const g=gk(x),c=x.ctx||{};return[tshort(x),x.k=='rsi'||x.k.startsWith('sp')?'':g.leg,c.arms||'',x.k=='dj'&&c.box?c.box+' cm box':''].filter(Boolean).join(' · ')};
+const tms=d=>{const t=new Date(d+'T00:00:00').getTime();return isNaN(t)?0:t},isoOf=t=>{const d=new Date(t);return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')};
+const avgOf=l=>l.length?l.reduce((a,p)=>a+p.v,0)/l.length:null,dltOf=(c,p)=>c==null||p==null||p==0?null:(c-p)/Math.abs(p)*100;
+const pcs=d=>d==null?'<span class=mu>–</span>':`<span style="color:${d>=0?'#3DDC84':'#EF4444'}">${d>=0?'+':'−'}${Math.abs(d).toFixed(1)}%</span>`;
+function winOf(pts,rg){const t0=new Date();t0.setHours(0,0,0,0);const end=t0.getTime(),n=RGN[rg];if(!n){const a=pts.length?pts[0].t:end;return{cur:pts,prev:[],a,b:Math.max(end,pts.length?pts[pts.length-1].t:end)}}const a=end-(n-1)*DAY;return{cur:pts.filter(p=>p.t>=a&&p.t<=end),prev:pts.filter(p=>p.t>=a-n*DAY&&p.t<a),a,b:end}}
+let TP=[];
+function tsChart(ss,W,a,b,dec,u,best){const H=200,pl=44,pr=14,pt=26,pb=26,all=ss.flatMap(q=>q.pts);TP=[];if(!all.length)return'';let lo=Math.min(...all.map(p=>p.v)),hi=Math.max(...all.map(p=>p.v));if(hi==lo){hi+=1;lo-=1}const pd=(hi-lo)*.2;lo-=pd;hi+=pd;if(Math.min(...all.map(p=>p.v))>=0&&lo<0)lo=0;
+ const X=t=>b==a?(pl+W-pr)/2:pl+(t-a)/(b-a)*(W-pl-pr),Y=v=>pt+(hi-v)/(hi-lo)*(H-pt-pb);let g='';
+ for(let i=0;i<3;i++){const v=lo+(hi-lo)*i/2,y=Y(v);g+=`<line x1=${pl} x2=${W-pr} y1=${y} y2=${y} stroke="#252E3B"/><text x=${pl-6} y=${y+4} text-anchor=end fill="#8995A5" font-size=11>${v.toFixed(dec)}</text>`}
+ let o=`<svg width=${W} height=${H}><text x=4 y=11 fill="#8995A5" font-size=11>${u}</text>${g}<text x=${pl} y=${H-6} fill="#8995A5" font-size=11>${fd(isoOf(a))}</text>${b>a?`<text x=${W-pr} y=${H-6} text-anchor=end fill="#8995A5" font-size=11>${fd(isoOf(b))}</text>`:''}`;
+ ss.forEach(q=>{if(q.pts.length>1)o+=`<polyline points="${q.pts.map(p=>X(p.t)+','+Y(p.v)).join(' ')}" fill=none stroke="${q.c}" stroke-width=2.5 stroke-linejoin=round stroke-linecap=round opacity=.95 />`;
+  const bv=best?Math.max(...q.pts.map(p=>p.v)):null;q.pts.forEach(p=>{const x=X(p.t),y=Y(p.v),bs=best&&p.v==bv;TP.push({x,y,l:q.l,d:p.d,v:p.v,c:q.c});o+=`<circle cx=${x} cy=${y} r=${bs?6:4} fill="${bs?q.c:'#0B0E13'}" stroke="${q.c}" stroke-width=2 />`})});
+ return o+'</svg>'}
+function tipWire(el,tip,dec,u){const f=e=>{const r=el.getBoundingClientRect(),x=e.clientX-r.left,y=e.clientY-r.top;let m=null,d=1e9;TP.forEach(p=>{const q=Math.hypot(p.x-x,p.y-y);if(q<d){d=q;m=p}});if(m&&d<40)tip.innerHTML=`<b style="color:${m.c}">●</b> ${hx2(m.l)} · ${fd(m.d)} · <b>${m.v.toFixed(dec)} ${u}</b>`};el.onpointerdown=el.onpointermove=f}
 async function hist(){M.innerHTML='<div class=sk></div><div class=sk></div>';const raw=await rsCur(),all=raw.filter(x=>!x.invalid).map(x=>x.k=='sp'?{...x,k:(x.ctx&&x.ctx.mode=='Flying Sprint')?'spf':'sps'}:x);S=null;
- const ORD=['Countermovement Jump','Squat Jump','Approach Vertical Jump','Drop Jump','RSI 10/5'],LO=['Both legs','Right leg','Left leg'];
- M.innerHTML=`<h2>Progression</h2><div class=row><select id=fc><option value="">All tests</option>${ORD.map(o=>`<option>${o}</option>`).join('')}</select><select id=fl><option value="">All legs</option>${LO.map(o=>`<option>${o}</option>`).join('')}</select><button id=csv>Export CSV</button></div><div id=gs></div><div class=st>Recent tests</div><div id=rt></div>`;
+ const mk=x=>{try{const q=sum(x);return{v:+q.m[1],d:x.date,t:tms(x.date),dec:(q.m[1].split('.')[1]||'').length,u:q.m[2],x}}catch(e){return null}};
+ const vmap=list=>{const m={};list.forEach(x=>{const p=mk(x);if(!p)return;const l=vlab(x);(m[l]=m[l]||{l,r:trank(x),pts:[]}).pts.push(p)});return Object.values(m).sort((a,b)=>a.r-b.r||(a.l<b.l?-1:1)).map((q,i)=>{q.pts.sort((a,b)=>a.t-b.t||a.x.id-b.x.id);q.c=VC[i%VC.length];q.dec=q.pts[0].dec;q.u=q.pts[0].u;return q})};
+ M.innerHTML=`<h2>Progression</h2><div class=sgm id=hm><button data-m=s>Single chart</button><button data-m=c>Compare events</button></div><div class=sgm id=hr style="margin-top:8px">${Object.keys(RGL).map(k=>`<button data-r=${k}>${RGL[k]}</button>`).join('')}</div><div id=pgc style="margin-top:12px"></div><details class=ad><summary>Recent tests</summary><div id=rt></div></details><div class=row><button id=csv>Export CSV</button></div>`;
  const rec=()=>{$('#rt').innerHTML=raw.slice().sort((a,c)=>a.date<c.date?1:a.date>c.date?-1:c.id-a.id).slice(0,8).map(x=>{let v='';try{v=sum(x).m[1]+' '+sum(x).m[2]}catch(e){}return`<div class=rc><span class=pf2 style="width:84px">${fd(x.date)}</span><span style="flex:1;${x.invalid?'text-decoration:line-through;opacity:.5':''}">${x.name}</span><b>${v}</b><button data-v=${x.id}>${x.invalid?'Restore':'Void'}</button></div>`}).join('')||'<div class=pf2>No tests saved yet.</div>';
   $('#rt').querySelectorAll('[data-v]').forEach(bt=>bt.onclick=async()=>{const x=raw.find(q=>q.id==bt.dataset.v);x.invalid=!x.invalid;await tx('readwrite',s=>s.put(x));hist()})};
- const draw=()=>{const fc=$('#fc').value,fl=$('#fl').value,m={};
-  all.filter(x=>{const g=gk(x);return(!fc||g.base==fc)&&(!fl||g.leg==fl)}).forEach(x=>{const g=gk(x),id=g.base+'|'+g.leg+'|'+g.arm+'|'+g.man;(m[id]=m[id]||{base:g.base,leg:g.leg,arm:g.arm,man:g.man,l:[]}).l.push(x)});
-  const gs=Object.values(m).sort((a,b)=>{const i=q=>ORD.includes(q.base)?ORD.indexOf(q.base):99;return i(a)-i(b)||LO.indexOf(a.leg)-LO.indexOf(b.leg)});GS=[];
-  $('#gs').innerHTML=gs.length?gs.map((g,i)=>{const l=g.l.sort((a,b)=>a.date<b.date?-1:a.date>b.date?1:a.id-b.id),pts=l.map(x=>{const s=sum(x);return{v:+s.m[1],d:x.date,dec:(s.m[1].split('.')[1]||'').length,x,u:s.m[2],t:s.m[1]}}),dc=pts[0].dec,u=pts[0].u,vs=pts.map(p=>p.v),ch=vs[vs.length-1]-vs[0];GS.push({pts,u});
-   return`<div class="card gc"><div class=gh><b style="font-size:17px">${g.base}</b>${g.leg?`<span class=badge>${g.leg}</span>`:''}${g.arm?`<span class=badge>${g.arm}</span>`:''}${g.man?`<span class=badge>Manual entry</span>`:''}</div>
-<div class=stats><div><span>Personal best</span><b>${Math.max(...vs).toFixed(dc)}</b></div><div><span>Average</span><b>${(vs.reduce((a,b)=>a+b,0)/vs.length).toFixed(dc)}</b></div><div><span>Tests</span><b>${vs.length}</b></div><div><span>Change</span><b>${vs.length>1?(ch>=0?'+':'')+ch.toFixed(dc):'–'}</b></div></div>
-<div class=ch data-g=${i}></div><details><summary>Results (${vs.length}) · ${u}</summary>${pts.slice().reverse().map(p=>`<div class=rw><span class=mu>${p.x.date}</span><span style="flex:1 1 140px">${p.x.name}<div class=mu>${p.x.notes||''}</div></span><span class=v>${p.t} ${u}</span><span><button data-e=${p.x.id}>Edit</button> <button data-d=${p.x.id}>✕</button></span></div>`).join('')}</details></div>`}).join(''):'<div class="card mu">No saved tests yet. Run a test and press Save to start tracking your progression.</div>';
-  paint();
-  $('#gs').querySelectorAll('[data-d]').forEach(b=>b.onclick=async()=>{const x0=all.find(q=>String(q.id)==b.dataset.d);if(x0)tomb('r',aidOf(x0),x0.id);await tx('readwrite',s=>s.delete(b.dataset.d));hist()});
-  $('#gs').querySelectorAll('[data-e]').forEach(b=>b.onclick=async()=>{const x=all.find(q=>q.id==b.dataset.e);x.name=prompt('Name',x.name)??x.name;x.notes=prompt('Notes',x.notes)??x.notes;x.date=prompt('Date (YYYY-MM-DD)',x.date)??x.date;await tx('readwrite',s=>s.put(x));hist()})};
- $('#fc').onchange=$('#fl').onchange=draw;draw();rec();window.onresize=()=>{if(document.querySelector('.ch'))paint()};
+ const stat=(c,l)=>`<div><span>${l}</span><b>${c}</b></div>`,empty='<div class="card mu">No saved tests yet. Run a test and press Save to start tracking your progression.</div>',none=`<p class=pf2>No tests in this period. Try a longer range.</p>`;
+ const drawChart=()=>{};
+ const single=()=>{const vs=vmap(all);const host=$('#pgc');if(!vs.length){host.innerHTML=empty;return}
+  const q=vs.find(v=>v.l==HS.hv)||vs[0];HS.hv=q.l;const w=winOf(q.pts,HS.rg),c=avgOf(w.cur),pv=avgOf(w.prev),d=HS.rg=='a'?null:dltOf(c,pv),dec=q.dec,u=q.u;
+  host.innerHTML=`<select id=sv style="width:100%">${vs.map((v,i)=>`<option value=${i}${v.l==q.l?' selected':''}>${hx2(v.l)} (${v.pts.length})</option>`).join('')}</select>
+  <div class="card gc" style="margin-top:12px"><div class=stats><div><span>Average · ${RGL[HS.rg].toLowerCase()}</span><b>${c==null?'–':c.toFixed(dec)}</b></div><div><span>vs ${RGP[HS.rg]||'previous'}</span><b>${pcs(d)}</b></div><div><span>Best</span><b>${w.cur.length?Math.max(...w.cur.map(p=>p.v)).toFixed(dec):'–'}</b></div><div><span>Tests</span><b>${w.cur.length}</b></div></div>
+  ${w.cur.length?`<div id=cw class=ch2w></div><div id=tip class=pf2 style="min-height:18px;margin-top:6px">Tap a point to see its value</div>`:none}
+  ${w.cur.length?`<details><summary>Results (${w.cur.length}) · ${u}</summary>${w.cur.slice().reverse().map(p=>`<div class=rw><span class=mu>${p.x.date}</span><span style="flex:1 1 140px">${p.x.name}<div class=mu>${p.x.notes||''}</div></span><span class=v>${p.v.toFixed(dec)} ${u}</span><span><button data-e=${p.x.id}>Edit</button> <button data-d=${p.x.id}>✕</button></span></div>`).join('')}</details>`:''}</div>`;
+  $('#sv').onchange=e=>{HS.hv=vs[+e.target.value].l;single()};
+  const cw=$('#cw');if(cw){const go=()=>{cw.innerHTML=tsChart([{...q,pts:w.cur}],cw.clientWidth||300,w.a,w.b,dec,u,true)};go();tipWire(cw,$('#tip'),dec,u);RZ=go}
+  wireRows(host)};
+ let RZ=null;
+ const compare=()=>{const cat=CATS.find(c=>c.id==HS.ct)||CATS[0],host=$('#pgc'),vs=vmap(all.filter(cat.f));
+  const tabs=`<div class=sgm id=ct>${CATS.map(c=>`<button data-c=${c.id}${c.id==cat.id?' class=on':''}>${c.n}</button>`).join('')}</div>`;
+  if(!vs.length){host.innerHTML=tabs+'<div class="card mu" style="margin-top:12px">No saved tests in this group yet.</div>';wireTabs();return}
+  const dec=vs[0].dec,u=vs[0].u,rows=vs.map(q=>{const w=winOf(q.pts,HS.rg);return{q,w,c:avgOf(w.cur),d:HS.rg=='a'?null:dltOf(avgOf(w.cur),avgOf(w.prev))}}),on=rows.filter(r=>!HS.off[r.q.l]&&r.w.cur.length);
+  const a=Math.min(...rows.map(r=>r.w.a)),b=Math.max(...rows.map(r=>r.w.b));
+  host.innerHTML=tabs+`<div class="card gc" style="margin-top:12px">${on.length?`<div id=cw class=ch2w></div><div id=tip class=pf2 style="min-height:18px;margin-top:6px">Tap a point to see its value</div>`:none}
+  <div class=cmpl>${rows.map(r=>`<button class="cmpr${HS.off[r.q.l]?' off':''}" data-l="${hx2(r.q.l)}"><i style="background:${r.q.c}"></i><span class=cn>${hx2(r.q.l)}</span><span class=cv>${r.c==null?'–':r.c.toFixed(dec)} <small>${u}</small></span><span class=cd>${pcs(r.d)}</span></button>`).join('')}</div>
+  <p class=pf2 style="margin:8px 0 0">Average for ${RGL[HS.rg].toLowerCase()} and change vs ${RGP[HS.rg]||'previous period'}. Tap a row to hide or show a line.</p></div>`;
+  wireTabs();host.querySelectorAll('.cmpr').forEach(bt=>bt.onclick=()=>{const l=vs.find(v=>hx2(v.l)==bt.dataset.l)?.l;if(l){HS.off[l]=!HS.off[l];compare()}});
+  const cw=$('#cw');if(cw){const go=()=>{cw.innerHTML=tsChart(on.map(r=>({...r.q,pts:r.w.cur})),cw.clientWidth||300,a,b,dec,u,false)};go();tipWire(cw,$('#tip'),dec,u);RZ=go}};
+ const wireTabs=()=>{document.querySelectorAll('#ct button').forEach(bt=>bt.onclick=()=>{HS.ct=bt.dataset.c;compare()})};
+ const wireRows=host=>{host.querySelectorAll('[data-d]').forEach(b=>b.onclick=async()=>{const x0=all.find(q=>String(q.id)==b.dataset.d);if(x0)tomb('r',aidOf(x0),x0.id);await tx('readwrite',s=>s.delete(b.dataset.d));hist()});
+  host.querySelectorAll('[data-e]').forEach(b=>b.onclick=async()=>{const x=all.find(q=>q.id==b.dataset.e);x.name=prompt('Name',x.name)??x.name;x.notes=prompt('Notes',x.notes)??x.notes;x.date=prompt('Date (YYYY-MM-DD)',x.date)??x.date;await tx('readwrite',s=>s.put(x));hist()})};
+ const render=()=>{RZ=null;document.querySelectorAll('#hm button').forEach(b=>b.classList.toggle('on',b.dataset.m==HS.mode));document.querySelectorAll('#hr button').forEach(b=>b.classList.toggle('on',b.dataset.r==HS.rg));HS.mode=='c'?compare():single()};
+ document.querySelectorAll('#hm button').forEach(b=>b.onclick=()=>{HS.mode=b.dataset.m;render()});document.querySelectorAll('#hr button').forEach(b=>b.onclick=()=>{HS.rg=b.dataset.r;render()});
+ render();rec();window.onresize=()=>{if(RZ&&document.querySelector('#cw'))RZ()};
  $('#csv').onclick=()=>{const rows=[['date','test','leg','name','main_metric','value','unit','fps','details','notes']].concat(all.map(x=>{const s=sum(x),g=gk(x);return[x.date,g.base,g.leg,x.name,s.m[0],s.m[1],s.m[2],x.fps,s.r.map(q=>q.join(': ')).join(' | '),x.notes]}));
   const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([rows.map(r=>r.map(c=>'"'+String(c??'').replace(/"/g,'""')+'"').join(',')).join('\n')],{type:'text/csv'}));a.download='plyotic.csv';a.click();toast('CSV exported')}}
 
