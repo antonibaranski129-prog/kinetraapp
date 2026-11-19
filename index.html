@@ -388,9 +388,9 @@ function onbForm(edit){const A=getAth(),Y=new Date().getFullYear(),st={sex:A.sex
   $('#ogo').onclick=async()=>{grab();if(!last){i++;draw();return}setAth({sex:st.sex,birthYear:st.y,height:st.h,weight:st.w,onboarded:true,dob:(A.dob&&+A.dob.slice(0,4)==st.y)?A.dob:''});try{await syncProfile()}catch(e){}obClose();edit?prof():home()};
   const bk=$('#obk');if(bk)bk.onclick=()=>{grab();if(i>0){i--;draw()}else obClose()}}
  draw()}
-async function boot(){try{await loadAth();if(authService.enabled()&&await authService.getSession().catch(()=>null))await syncProfile().catch(()=>{})}catch(e){}
+async function boot(){let sgn=false;try{await loadAth();if(authService.enabled()&&await authService.getSession().catch(()=>null)){sgn=true;await syncProfile().catch(()=>{})}}catch(e){}
  await loadCur();startSync();if(coachOn()){obClose();nav('fr');return}
- const a=getAth();if(prComplete(a)){obClose();home()}else if(a.sex||a.birthYear||a.height||a.weight||a.dob)onbForm(false);else onbWelcome()}
+ const a=getAth();if(prComplete(a)){obClose();home()}else if(sgn||a.sex||a.birthYear||a.height||a.weight||a.dob)onbForm(false);else onbWelcome()}
 // storage
 const db=new Promise((ok,no)=>{const q=indexedDB.open('plyotic',2);q.onupgradeneeded=()=>{const d=q.result;if(!d.objectStoreNames.contains('t'))d.createObjectStore('t',{keyPath:'id'});if(!d.objectStoreNames.contains('p'))d.createObjectStore('p',{keyPath:'id'})};q.onsuccess=()=>ok(q.result);q.onerror=()=>no(q.error)});
 const txp=async(m,f)=>{const d=await db;return new Promise((ok,no)=>{const s=d.transaction('p',m).objectStore('p'),q=f(s);q.onsuccess=()=>ok(q.result);q.onerror=()=>no(q.error)})};
