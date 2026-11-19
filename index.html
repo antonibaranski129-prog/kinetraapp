@@ -689,14 +689,21 @@ const vlab=x=>{const g=gk(x),c=x.ctx||{};return[tshort(x),x.k=='rsi'||x.k.starts
 const tms=d=>{const t=new Date(d+'T00:00:00').getTime();return isNaN(t)?0:t},isoOf=t=>{const d=new Date(t);return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')};
 const avgOf=l=>l.length?l.reduce((a,p)=>a+p.v,0)/l.length:null,dltOf=(c,p)=>c==null||p==null||p==0?null:(c-p)/Math.abs(p)*100;
 const pcs=d=>d==null?'<span class=mu>–</span>':`<span style="color:${d>=0?'#3DDC84':'#EF4444'}">${d>=0?'+':'−'}${Math.abs(d).toFixed(1)}%</span>`;
-function winOf(pts,rg){const t0=new Date();t0.setHours(0,0,0,0);const n=RGN[rg],end=t0.getTime()-(n?(HS.k||0)*n*DAY:0);if(!n){const a=pts.length?pts[0].t:end;return{cur:pts,prev:[],a,b:Math.max(end,pts.length?pts[pts.length-1].t:end)}}const a=end-(n-1)*DAY;return{cur:pts.filter(p=>p.t>=a&&p.t<=end),prev:pts.filter(p=>p.t>=a-n*DAY&&p.t<a),a,b:end}}
+function winOf(pts,rg){const t0=new Date();t0.setHours(0,0,0,0);const n=RGN[rg],end=t0.getTime()-(n?(HS.k||0)*n*DAY:0);if(!n){const a=pts.length?pts[0].t:end;return{cur:pts,prev:[],a,b:Math.max(end,pts.length?pts[pts.length-1].t:end)}}const a=end-(n-1)*DAY;return{cur:pts.filter(p=>p.t>=a&&p.t<=end),prev:pts.filter(p=>p.t>=a-n*DAY&&p.t<a),pr:pts.filter(p=>p.t<a).pop()||null,nx:pts.find(p=>p.t>end)||null,a,b:end}}
 let TP=[];
-function tsChart(ss,W,a,b,dec,u,best){const H=200,pl=44,pr=14,pt=26,pb=26,all=ss.flatMap(q=>q.pts);TP=[];if(!all.length)return'';let lo=Math.min(...all.map(p=>p.v)),hi=Math.max(...all.map(p=>p.v));if(hi==lo){hi+=1;lo-=1}const pd=(hi-lo)*.2;lo-=pd;hi+=pd;if(Math.min(...all.map(p=>p.v))>=0&&lo<0)lo=0;
- const X=t=>b==a?(pl+W-pr)/2:pl+(t-a)/(b-a)*(W-pl-pr),Y=v=>pt+(hi-v)/(hi-lo)*(H-pt-pb);let g='';
+function tsChart(ss,W,a,b,dec,u,best,ex){const H=200,pl=44,pr=14,pt=26,pb=26,da=ex?a-DAY:a,db=ex&&ex.fwd?b+DAY:b,GR='#566070';TP=[];
+ const seg=[],vis=[],dots=[];
+ ss.forEach(q=>{const L=[...(ex&&q.pr?[q.pr]:[]),...q.pts,...(ex&&q.nx?[q.nx]:[])];
+  for(let i=0;i+1<L.length;i++){const p=L[i],r=L[i+1],col=q.pts.includes(p)&&q.pts.includes(r)?q.c:GR,T1=p.t,V1=p.v,T2=r.t,V2=r.v,f=t=>T2==T1?V2:V1+(V2-V1)*(t-T1)/(T2-T1),t1=Math.max(T1,da),t2=Math.min(T2,db);if(T1!=T2&&t1>=t2)continue;if(T1==T2&&(T1<da||T1>db))continue;seg.push({t1,v1:f(t1),t2,v2:f(t2),c:col});vis.push(f(t1),f(t2))}
+  q.pts.forEach(p=>{vis.push(p.v);dots.push({p,q,g:0})});
+  if(ex){[q.pr,q.nx].forEach(p=>{if(p&&p.t>=da&&p.t<=db){vis.push(p.v);dots.push({p,q,g:1})}})}});
+ if(!vis.length)return'';let lo=Math.min(...vis),hi=Math.max(...vis);if(hi==lo){hi+=1;lo-=1}const pd=(hi-lo)*.2;lo-=pd;hi+=pd;if(Math.min(...vis)>=0&&lo<0)lo=0;
+ const X=t=>db==da?(pl+W-pr)/2:pl+(t-da)/(db-da)*(W-pl-pr),Y=v=>pt+(hi-v)/(hi-lo)*(H-pt-pb);let g='';
+ if(ex){g+=`<rect x=${X(da)} y=${pt-6} width=${Math.max(0,X(a)-X(da))} height=${H-pt-pb+6} fill="rgba(255,255,255,.04)"/>`;if(ex.fwd)g+=`<rect x=${X(b)} y=${pt-6} width=${Math.max(0,X(db)-X(b))} height=${H-pt-pb+6} fill="rgba(255,255,255,.04)"/>`}
  for(let i=0;i<3;i++){const v=lo+(hi-lo)*i/2,y=Y(v);g+=`<line x1=${pl} x2=${W-pr} y1=${y} y2=${y} stroke="#252E3B"/><text x=${pl-6} y=${y+4} text-anchor=end fill="#8995A5" font-size=11>${v.toFixed(dec)}</text>`}
- let o=`<svg width=${W} height=${H}><text x=4 y=11 fill="#8995A5" font-size=11>${u}</text>${g}<text x=${pl} y=${H-6} fill="#8995A5" font-size=11>${fd(isoOf(a))}</text>${b>a?`<text x=${W-pr} y=${H-6} text-anchor=end fill="#8995A5" font-size=11>${fd(isoOf(b))}</text>`:''}`;
- ss.forEach(q=>{if(q.pts.length>1)o+=`<polyline points="${q.pts.map(p=>X(p.t)+','+Y(p.v)).join(' ')}" fill=none stroke="${q.c}" stroke-width=2.5 stroke-linejoin=round stroke-linecap=round opacity=.95 />`;
-  const bv=best?Math.max(...q.pts.map(p=>p.v)):null;q.pts.forEach(p=>{const x=X(p.t),y=Y(p.v),bs=best&&p.v==bv;TP.push({x,y,l:q.l,d:p.d,v:p.v,c:q.c});o+=`<circle cx=${x} cy=${y} r=${bs?6:4} fill="${bs?q.c:'#0B0E13'}" stroke="${q.c}" stroke-width=2 />`})});
+ let o=`<svg width=${W} height=${H}><text x=4 y=11 fill="#8995A5" font-size=11>${u}</text>${g}<text x=${X(a)} y=${H-6} fill="#8995A5" font-size=11>${fd(isoOf(a))}</text>${b>a?`<text x=${X(b)} y=${H-6} text-anchor=end fill="#8995A5" font-size=11>${fd(isoOf(b))}</text>`:''}`;
+ seg.filter(x=>x.c==GR).concat(seg.filter(x=>x.c!=GR)).forEach(x=>{o+=`<line x1=${X(x.t1)} y1=${Y(x.v1)} x2=${X(x.t2)} y2=${Y(x.v2)} stroke="${x.c}" stroke-width=2.5 stroke-linecap=round />`});
+ ss.forEach(q=>{const bv=best&&q.pts.length?Math.max(...q.pts.map(p=>p.v)):null;dots.filter(d=>d.q==q).forEach(d=>{const p=d.p,x=X(p.t),y=Y(p.v),bs=!d.g&&best&&p.v==bv,c=d.g?GR:q.c;TP.push({x,y,l:q.l,d:p.d,v:p.v,c});o+=`<circle cx=${x} cy=${y} r=${bs?6:4} fill="${bs?c:'#0B0E13'}" stroke="${c}" stroke-width=2 />`})});
  return o+'</svg>'}
 function tipWire(el,tip,dec,u){const f=e=>{const r=el.getBoundingClientRect(),x=e.clientX-r.left,y=e.clientY-r.top;let m=null,d=1e9;TP.forEach(p=>{const q=Math.hypot(p.x-x,p.y-y);if(q<d){d=q;m=p}});if(m&&d<40)tip.innerHTML=`<b style="color:${m.c}">●</b> ${hx2(m.l)} · ${fd(m.d)} · <b>${m.v.toFixed(dec)} ${u}</b>`};el.onpointerdown=el.onpointermove=f}
 async function hist(){M.innerHTML='<div class=sk></div><div class=sk></div>';const raw=await rsCur(),all=raw.filter(x=>!x.invalid).map(x=>x.k=='sp'?{...x,k:(x.ctx&&x.ctx.mode=='Flying Sprint')?'spf':'sps'}:x);S=null;
@@ -714,7 +721,7 @@ async function hist(){M.innerHTML='<div class=sk></div><div class=sk></div>';con
   ${w.cur.length?`<div id=cw class=ch2w></div><div id=tip class=pf2 style="min-height:18px;margin-top:6px">Tap a point to see its value</div>`:none}
   ${w.cur.length?`<details><summary>Results (${w.cur.length}) · ${u}</summary>${w.cur.slice().reverse().map(p=>`<div class=rw><span class=mu>${p.x.date}</span><span style="flex:1 1 140px">${p.x.name}<div class=mu>${p.x.notes||''}</div></span><span class=v>${p.v.toFixed(dec)} ${u}</span><span><button data-e=${p.x.id}>Edit</button> <button data-d=${p.x.id}>✕</button></span></div>`).join('')}</details>`:''}</div>`;
   $('#sv').onchange=e=>{HS.hv=vs[+e.target.value].l;single()};
-  const cw=$('#cw');if(cw){const go=()=>{cw.innerHTML=tsChart([{...q,pts:w.cur}],cw.clientWidth||300,w.a,w.b,dec,u,true)};go();tipWire(cw,$('#tip'),dec,u);RZ=go}
+  const cw=$('#cw');if(cw){const go=()=>{cw.innerHTML=tsChart([{...q,pts:w.cur,pr:w.pr,nx:w.nx}],cw.clientWidth||300,w.a,w.b,dec,u,true,HS.rg=='w'?{fwd:HS.k>0}:null)};go();tipWire(cw,$('#tip'),dec,u);RZ=go}
   wireRows(host)};
  let RZ=null;
  const compare=()=>{const cat=CATS.find(c=>c.id==HS.ct)||CATS[0],host=$('#pgc'),vs=vmap(all.filter(cat.f));
@@ -726,7 +733,7 @@ async function hist(){M.innerHTML='<div class=sk></div><div class=sk></div>';con
   <div class=st style="margin:16px 0 8px">Choose what to compare <span class=pf2 style="margin-left:auto;letter-spacing:0;text-transform:none">${nsel} selected</span></div><div class=cmpl>${rows.map(r=>`<button class="cmpr${SL[r.q.l]?'':' off'}" aria-pressed="${SL[r.q.l]?'true':'false'}" data-l="${hx2(r.q.l)}"><i style="background:${r.q.c}"></i><span class=cn>${hx2(r.q.l)}</span><span class=cv>${r.c==null?'–':r.c.toFixed(dec)} <small>${u}</small></span><span class=cd>${pcs(r.d)}</span></button>`).join('')}</div>
   <p class=pf2 style="margin:8px 0 0">Average for ${RGL[HS.rg].toLowerCase()} and change vs ${RGP[HS.rg]||'previous period'}. Tap a row to add it to or remove it from the chart.</p></div>`;
   wireTabs();host.querySelectorAll('.cmpr').forEach(bt=>bt.onclick=()=>{const l=vs.find(v=>hx2(v.l)==bt.dataset.l)?.l;if(l){SL[l]=SL[l]?0:1;compare()}});
-  const cw=$('#cw');if(cw){const go=()=>{cw.innerHTML=tsChart(on.map(r=>({...r.q,pts:r.w.cur})),cw.clientWidth||300,a,b,dec,u,false)};go();tipWire(cw,$('#tip'),dec,u);RZ=go}};
+  const cw=$('#cw');if(cw){const go=()=>{cw.innerHTML=tsChart(on.map(r=>({...r.q,pts:r.w.cur,pr:r.w.pr,nx:r.w.nx})),cw.clientWidth||300,a,b,dec,u,false,HS.rg=='w'?{fwd:HS.k>0}:null)};go();tipWire(cw,$('#tip'),dec,u);RZ=go}};
  const wireTabs=()=>{document.querySelectorAll('#ct button').forEach(bt=>bt.onclick=()=>{HS.ct=bt.dataset.c;compare()})};
  const wireRows=host=>{host.querySelectorAll('[data-d]').forEach(b=>b.onclick=async()=>{const x0=all.find(q=>String(q.id)==b.dataset.d);if(x0)tomb('r',aidOf(x0),x0.id);await tx('readwrite',s=>s.delete(b.dataset.d));hist()});
   host.querySelectorAll('[data-e]').forEach(b=>b.onclick=async()=>{const x=all.find(q=>q.id==b.dataset.e);x.name=prompt('Name',x.name)??x.name;x.notes=prompt('Notes',x.notes)??x.notes;x.date=prompt('Date (YYYY-MM-DD)',x.date)??x.date;await tx('readwrite',s=>s.put(x));hist()})};
