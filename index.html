@@ -189,7 +189,7 @@ main{animation:fi .28s ease both}
 #v{pointer-events:none;-webkit-touch-callout:none}
 
 /* progression v2 */
-.ch2w{width:100%;touch-action:pan-y}.ch2w svg{display:block}
+.ch2w{width:100%;touch-action:none;-webkit-user-select:none;user-select:none}.ch2w svg{display:block}
 .cmpl{display:flex;flex-direction:column;gap:6px;margin-top:12px}
 .cmpr{display:flex;align-items:center;gap:10px;width:100%;text-align:left;padding:10px 12px;min-height:44px;background:var(--s2,#181F2A);border:1px solid var(--bd);border-radius:12px}
 .cmpr i{width:12px;height:12px;border-radius:50%;flex:none}.cmpr .cn{flex:1;min-width:0;font-size:13px;font-weight:600;line-height:1.25}.cmpr .cv{font-weight:700;white-space:nowrap}.cmpr .cv small{color:var(--mu);font-weight:500}.cmpr .cd{min-width:56px;text-align:right;font-weight:700;font-size:13px}.cmpr.off{opacity:.4}.cmpr.off i{background:transparent!important;border:2px solid var(--mu)}
@@ -709,7 +709,7 @@ function tsChart(ss,W,a,b,dec,u,best,ex,sel){const H=200,pl=44,pr=14,pt=26,pb=26
  seg.filter(x=>x.c==GR).concat(seg.filter(x=>x.c!=GR)).forEach(x=>{o+=`<line x1=${X(x.t1)} y1=${Y(x.v1)} x2=${X(x.t2)} y2=${Y(x.v2)} stroke="${x.c}" stroke-width=2.5 stroke-linecap=round${sel?' opacity=.28':''} />`});
  ss.forEach(q=>{const bv=best&&q.pts.length?Math.max(...q.pts.map(p=>p.v)):null;dots.filter(d=>d.q==q).forEach(d=>{const p=d.p,x=X(p.t),y=Y(p.v),bs=!d.g&&best&&p.v==bv,c=d.g?GR:q.c,sl=sel&&p.d==sel;TP.push({x,y,l:q.l,d:p.d,v:p.v,c});o+=`<circle cx=${x} cy=${y} r=${sl?7:bs?6:4} fill="${sl||bs?c:'#0B0E13'}" stroke="${sl?'#0B0E13':c}" stroke-width=2${sel&&!sl?' opacity=.35':''} />`})});
  return o+'</svg>'}
-function selWire(el,pick){const near=e=>{const r=el.getBoundingClientRect(),x=e.clientX-r.left;let m=null,d=1e9;TP.forEach(p=>{const q=Math.abs(p.x-x);if(q<d){d=q;m=p}});return m&&m.d};let dn=0;el.onpointerdown=e=>{dn=1;const d=near(e);if(d)pick(d,1)};el.onpointermove=e=>{if(!dn)return;const d=near(e);if(d)pick(d,0)};el.onpointerup=el.onpointercancel=el.onpointerleave=()=>{dn=0}}
+function selWire(el,pick){const near=e=>{const r=el.getBoundingClientRect(),x=e.clientX-r.left;let m=null,d=1e9;TP.forEach(p=>{const q=Math.abs(p.x-x);if(q<d){d=q;m=p}});return m&&m.d};let dn=0;el.onpointerdown=e=>{dn=1;try{el.setPointerCapture(e.pointerId)}catch(x){}const d=near(e);if(d)pick(d,1)};el.onpointermove=e=>{if(!dn)return;const d=near(e);if(d)pick(d,0)};el.onpointerup=el.onpointercancel=e=>{dn=0;try{el.releasePointerCapture(e.pointerId)}catch(x){}}}
 const dcol=d=>d>0?'#3DDC84':d<0?'#EF4444':'#F4F7FB';
 const shHtml=(d,ps,u,dec,multi,none)=>{if(!d)return none||'';const dt=new Date(d+'T00:00:00').toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'}).toUpperCase();if(!ps.length)return'';
  if(!multi)return`<div class=shd>${dt}</div><div class=shv style="color:${ps[0].c}">${ps.map(q=>q.v.toFixed(dec)).join(' · ')} <small>${u}</small></div>`;
