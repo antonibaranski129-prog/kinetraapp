@@ -738,7 +738,7 @@ async function logView(){M.innerHTML='<div class=sk></div><div class=sk></div>';
   let h=row('Test',hx2(T[x.k]?T[x.k].n:tshort(x)))+row('Variant',hx2(vlab(x))+(x.manual?' · Manual entry':''))+row(hx2(m[0]),hx2(m[1])+' '+hx2(m[2]))+r.map(q=>row(hx2(q[0]),hx2(q[1]))).join('');
   if(c.leg&&!r.some(q=>/leg/i.test(q[0])))h+=row('Legs',hx2(c.leg));if(c.arms&&!r.some(q=>/arms/i.test(q[0])))h+=row('Arms',hx2(c.arms));if(c.type)h+=row('Takeoff type',hx2(c.type));if(c.box&&!r.some(q=>/box/i.test(q[0])))h+=row('Box height',hx2(c.box)+' cm');
   h+=row('Date',hx2(x.date))+row('Recording FPS',x.fps?hx2(x.fps):'–');
-  if(fr.length)h+=`<div class=lm>Marked frames</div>`+fr.map((f,i)=>row(hx2(evl(x.k,i)),'frame '+hx2(f))).join('');
+  if(fr.length&&x.k!='rsi')h+=`<div class=lm>Marked frames</div>`+fr.map((f,i)=>row(hx2(evl(x.k,i)),'frame '+hx2(f))).join('');
   const ah=[a.sex,a.height?a.height+' cm':'',a.weight?a.weight+' kg':'',a.birthYear?'b. '+a.birthYear:''].filter(Boolean).join(' · ');
   if(ah)h+=row('Athlete at test time',hx2(ah));
   if(x.method)h+=row('Method',hx2(x.method));if(x.verify)h+=row('Verification',hx2(x.verify));if(x.alg)h+=row('Algorithm',hx2(x.alg));
