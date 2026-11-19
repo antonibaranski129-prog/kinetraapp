@@ -452,7 +452,7 @@ const DEMO_RJ='media/avj.mp4';
 const DEMO_RSI='media/rsi.mp4';
 const grp=(t,g,vs,sel,id,hide)=>`<div class=og${id?` id=${id}`:''}${hide?' style="display:none"':''}><div class=ol>${t}</div><div class=opts data-g=${g}${vs.length==2?' style="grid-template-columns:repeat(2,1fr)"':''}>${vs.map(v=>`<div class="opt${v==sel?' sel':''}" data-v="${v}"><b>${v}</b></div>`).join('')}</div></div>`;
 const AR=()=>grp('Arm Movement','arm',['Hands on Hips','Arm Swing'],PREF.arms||'');
-const optsHtml=k=>k=='dj'?grp('Legs','dj',['Both legs','Right leg','Left leg'],'Both legs')+AR():k=='rsi'?AR():'<div style="margin-top:14px;font-weight:700">Test Configuration</div>'+grp('Takeoff Type','type',['Single-Leg','Double-Leg'],'')+grp('Takeoff Leg (Single-Leg only)','leg',['Left','Right'],'','legg',1)+(k=='cmj'?AR():'');
+const optsHtml=k=>k=='dj'?grp('Legs','dj',['Both legs','Right leg','Left leg'],'Both legs')+AR():k=='rsi'?AR():'<div style="margin-top:14px;font-weight:700">Test Configuration</div>'+grp('Takeoff Type','type',['Double-Leg','Single-Leg'],'Double-Leg')+grp('Takeoff Leg (Single-Leg only)','leg',['Left','Right'],'','legg',1)+(k=='cmj'?AR():'');
 const FS=`<div class="card" style="margin:14px 0"><b>Frame Selection</b><p class=mu style="margin:6px 0 0"><b style="color:#fff">Takeoff:</b> Select the last frame in which the takeoff foot or feet are in contact with the ground.<br><b style="color:#fff">Landing:</b> Select the first frame in which either foot touches the ground after the jump.</p></div>`;
 const DEMO_SJ='media/sj.mp4';
 let VSC=null;
