@@ -178,6 +178,11 @@ main{animation:fi .28s ease both}
 .trk[data-k=r]{height:26px}.trk[data-k=r] .tb,.trk[data-k=r] .sg2{border-radius:6px}.trk[data-k=r] .sg2{min-width:2px;box-shadow:inset 0 0 0 1px rgba(11,14,19,.55)}
 .trk[data-k=r] .cyc{top:-6px;bottom:-34px;border-radius:6px}.trk[data-k=r] #ph{top:-8px;bottom:-8px}
 .lbr.bt span{font-size:11px;font-weight:700;color:var(--mu)}.lbr.bt b{font-size:11px}
+
+/* split close labels */
+.lbr .r0{margin-left:1px}.lbr .l0{margin-left:-1px}
+.lbr.tp .bd.r0 b{border-bottom-right-radius:2px}.lbr.tp .bd.l0 b{border-bottom-left-radius:2px}
+.lbr.ld .bd.r0 b{border-top-right-radius:2px}.lbr.ld .bd.l0 b{border-top-left-radius:2px}
 </style></head><body>
 <header><span class="logo">PLYOTIC</span><span class="tag">Measure. Analyze. Improve.</span>
 <nav><button data-v="new" class="on">New Test</button><button data-v="fr">Freshness</button><button data-v="prof"><span class=hd>Athlete </span>Profile</button><button data-v="hist">Progression</button></nav><button class=gear data-v="set" aria-label="Settings" title="Settings"><svg width=22 height=22 viewBox="0 0 24 24" fill=none stroke=currentColor stroke-width=1.8 stroke-linecap=round stroke-linejoin=round><circle cx=12 cy=12 r=3.2 /><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z" /></svg></button></header>
@@ -514,7 +519,12 @@ function drawTl(){const v=$('#v'),tl=$('#tl'),trk=$('#trk');if(!tl||!trk||!v||!v
   if(!rs){const bd=`<span class="bd ${up?'ct':'cl'}" style="left:${PP(pos)}"><b>${up?'T ↑':'L ↓'}</b></span>`;if(up)top+=bd;else low+=bd}});
  $('#lbt').innerHTML=top;$('#lbl').innerHTML=low;$('#lbb').innerHTML=bot;stackLb();
  $('#lg').innerHTML=(rs?'':'<span><i class="ln1" style="background:var(--fl)"></i>T ↑ Takeoff</span><span><i class="ln1" style="background:var(--gd)"></i>L ↓ Landing</span>')+'<span><i class="bar1" style="background:var(--fl)"></i>Flight Phase</span>'+(gc?'<span><i class="bar1" style="background:var(--gd)"></i>Ground Contact</span>':'');movePh()}
-function stackLb(){stk($('#lbt'),28,28,'bottom');stk($('#lbb'),38,36,'top')}
+function pairSplit(t){if(!t||t.children.length<2)return false;t.style.height='';t.style.margin='';const ks=[...t.children];ks.forEach(e=>{e.classList.remove('l0','r0')});const W=t.getBoundingClientRect(),sp=ks.map(e=>({e,r:e.getBoundingClientRect()})).sort((a,b)=>a.r.left-b.r.left),cl=[];sp.forEach(x=>{const c=cl[cl.length-1];if(c&&x.r.left<c[c.length-1].r.right+6)c.push(x);else cl.push([x])});
+ if(!cl.some(c=>c.length>1))return true;if(cl.some(c=>c.length>2))return false;
+ cl.forEach(c=>{if(c.length==2){c[0].e.classList.add('r0');c[1].e.classList.add('l0')}});
+ const r2=ks.map(e=>e.getBoundingClientRect()).sort((a,b)=>a.left-b.left);let ok=r2[0].left>=W.left-1&&r2[r2.length-1].right<=W.right+1;for(let i=1;i<r2.length&&ok;i++)if(r2[i].left<r2[i-1].right+2)ok=false;
+ if(!ok)ks.forEach(e=>e.classList.remove('l0','r0'));return ok}
+function stackLb(){[['#lbt',28,28,'bottom'],['#lbl',28,28,'top'],['#lbb',38,36,'top']].forEach(([id,st,b,sd])=>{const t=$(id);if(!t)return;if(id!='#lbb'&&t.children.length&&pairSplit(t)){[...t.children].forEach(e=>{e.style[sd]='0px'});t.style.height=b+'px'}else stk(t,st,b,sd)})}
 function stk(t,step,base,side){if(!t)return;t.style.height='';t.style.margin='';if(!t.children.length){t.style.height='0px';t.style.margin='0';return}const sp=[...t.children].map(e=>({e,r:e.getBoundingClientRect()})).sort((a,b)=>a.r.left-b.r.left),ends=[];
  sp.forEach(x=>{let row=0;while(ends[row]!=null&&x.r.left<ends[row]+8)row++;ends[row]=x.r.right;x.e.style[side]=row*step+'px'});t.style.height=(base+Math.max(0,ends.length-1)*step)+'px'}
 function initTl(){const v=$('#v'),tl=$('#tl'),trk=$('#trk');let d=0;const sk=e=>{if(!v.duration)return;const r=trk.getBoundingClientRect(),[a,b]=vwin();v.pause();v.currentTime=a+Math.min(Math.max((e.clientX-r.left)/r.width,0),1)*(b-a)};
