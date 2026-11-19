@@ -1,4 +1,4 @@
--- KINETRA migration 2: server-side arrival time for reliable multi-device sync.
+-- PLYOTIC migration 2: server-side arrival time for reliable multi-device sync.
 -- Run once in Supabase SQL Editor (safe to run more than once).
 alter table public.results add column if not exists synced_at timestamptz not null default now();
 create or replace function public.touch_synced_at() returns trigger

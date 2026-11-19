@@ -1,4 +1,4 @@
--- KINETRA sync + coach links. Run once in Supabase SQL Editor (after supabase-profiles.sql).
+-- PLYOTIC sync + coach links. Run once in Supabase SQL Editor (after supabase-profiles.sql).
 
 create table if not exists public.athletes (
   id text primary key,
