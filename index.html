@@ -205,8 +205,8 @@ const T={sj:{n:'Squat Jump',e:['Takeoff','Landing'],d:'Start in a stationary squ
 cmj:{n:'Countermovement Jump',e:['Takeoff','Landing'],d:'Perform a vertical jump with a quick downward movement before takeoff, using one or both legs.'},
 rj1:{n:'Running Jump · Single Leg',e:['Takeoff','Landing'],d:'Perform a running approach followed by a vertical jump, taking off from one or both legs.'},
 rj2:{n:'Running Jump · Double Leg',e:['Takeoff','Landing'],d:'Perform a running approach followed by a vertical jump, taking off from one or both legs.'},
-dj:{n:'Drop Jump',e:['Landing','Takeoff','Landing'],d:'Mark the landing after the box, the takeoff, then the final landing.'},
-rsi:{n:'RSI 10/5 · Best 5 of 10',e:null,d:'Mark in order: the landing after the initial countermovement jump (excluded from scoring), then takeoff and landing for each of the 10 hops (21 marks).'},
+dj:{n:'Drop Jump',e:['Landing','Takeoff','Landing'],d:'Step off the box (do not jump off it), land and jump straight up again right away. Aim for the shortest possible ground contact and the highest possible jump.'},
+rsi:{n:'RSI 10/5 · Best 5 of 10',e:null,d:'Start with one countermovement jump (not scored), then do 10 consecutive hops. Make each hop as high as you can with the shortest possible ground contact.'},
 };
 const CAT=[];
 const H=f=>G*f*f/8;
@@ -460,6 +460,7 @@ const DEMO_RSI='media/rsi.mp4';
 const grp=(t,g,vs,sel,id,hide)=>`<div class=og${id?` id=${id}`:''}${hide?' style="display:none"':''}><div class=ol>${t}</div><div class=opts data-g=${g}${vs.length==2?' style="grid-template-columns:repeat(2,1fr)"':''}>${vs.map(v=>`<div class="opt${v==sel?' sel':''}" data-v="${v}"><b>${v}</b></div>`).join('')}</div></div>`;
 const AR=()=>grp('Arm Movement','arm',['Hands on Hips','Arm Swing'],PREF.arms||'');
 const optsHtml=k=>k=='dj'?grp('Legs','dj',['Both legs','Right leg','Left leg'],'Both legs')+AR():k=='rsi'?AR():'<div style="margin-top:14px;font-weight:700">Test Configuration</div>'+grp('Takeoff Type','type',['Double-Leg','Single-Leg'],'')+grp('Takeoff Leg (Single-Leg only)','leg',['Left','Right'],'','legg',1)+(k=='cmj'?AR():'');
+const FSD=`<div class="card" style="margin:14px 0"><b>Frame Selection</b><p class=mu style="margin:6px 0 0">Mark three frames in order:<br><b style="color:#fff">1. Landing:</b> the first frame in which either foot touches the ground after the box.<br><b style="color:#fff">2. Takeoff:</b> the last frame in which the foot or feet are in contact with the ground before the jump.<br><b style="color:#fff">3. Landing:</b> the first frame in which either foot touches the ground after the jump.</p></div>`,FSR=`<div class="card" style="margin:14px 0"><b>Frame Selection</b><p class=mu style="margin:6px 0 0">Mark in order: the landing after the initial countermovement jump (not scored), then the takeoff and the landing of each of the 10 hops (21 marks).<br><b style="color:#fff">Takeoff:</b> the last frame in which the feet are in contact with the ground.<br><b style="color:#fff">Landing:</b> the first frame in which either foot touches the ground.</p></div>`;
 const FS=`<div class="card" style="margin:14px 0"><b>Frame Selection</b><p class=mu style="margin:6px 0 0"><b style="color:#fff">Takeoff:</b> Select the last frame in which the takeoff foot or feet are in contact with the ground.<br><b style="color:#fff">Landing:</b> Select the first frame in which either foot touches the ground after the jump.</p></div>`;
 const DEMO_SJ='media/sj.mp4';
 let VSC=null;
@@ -481,7 +482,7 @@ function wire(){autoVids(M.querySelectorAll('.hr'));M.querySelectorAll('.tc').fo
 function choose(){S=null;M.innerHTML='<button id=bk>← Tests</button><h2>Vertical Jump</h2>'+vrow('cmj','Countermovement Jump (CMJ)',T.cmj.d,vid(DEMO))+vrow('sj','Squat Jump (SJ)',T.sj.d,vid(DEMO_SJ))+vrow('rj2','Approach Vertical Jump (AVJ)',T.rj2.d,vid(DEMO_RJ));$('#bk').onclick=home;wire()}
 const guide=()=>`<div class=card style="margin:10px 0"><b>Visual guide · CMJ</b><video src="${DEMO}" style="margin-top:8px;max-height:40vh" loop muted autoplay playsinline controls></video><p class=mu style="margin:8px 0 0">Step through your own video the same way: mark the last frame of foot contact as <b>Takeoff</b>, then the first frame of ground contact as <b>Landing</b>.</p></div>`;
 function setup(k){ZV=null;S={k,ev:[],ctx:{},fps:240};const t=T[k];
- M.innerHTML=`<button id=bk>← Tests</button><h2>${k.startsWith('rj')?'Approach Vertical Jump':t.n}</h2><p class=mu>${t.d}</p>${['cmj','sj','rj1','rj2','dj','rsi'].includes(k)?optsHtml(k):''}${['cmj','sj','rj1','rj2'].includes(k)?FS:''}
+ M.innerHTML=`<button id=bk>← Tests</button><h2>${k.startsWith('rj')?'Approach Vertical Jump':t.n}</h2><p class=mu>${t.d}</p>${['cmj','sj','rj1','rj2','dj','rsi'].includes(k)?optsHtml(k):''}${['cmj','sj','rj1','rj2'].includes(k)?FS:k=='dj'?FSD:k=='rsi'?FSR:''}
 <div class=row><input type=file id=f accept="video/mp4,video/quicktime,video/webm,.mp4,.mov,.webm">
 <label class=mu>Recording FPS <select id=fps>${[30,60,120,240,480].map(x=>`<option ${x==(PREF.fps||240)?'selected':''}>${x}</option>`).join('')}<option value=0>Custom</option></select></label><input id=cf type=number placeholder="custom fps" style="display:none;width:110px"></div>
 <div class=row id=ctx>${ctxHtml(k)}</div><div id=info></div>
