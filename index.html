@@ -522,8 +522,7 @@ function drawTl(){const v=$('#v'),tl=$('#tl'),trk=$('#trk');if(!tl||!trk||!v||!v
 function pairSplit(t){if(!t||t.children.length<2)return false;t.style.height='';t.style.margin='';const ks=[...t.children];ks.forEach(e=>{e.classList.remove('l0','r0')});const W=t.getBoundingClientRect(),sp=ks.map(e=>({e,r:e.getBoundingClientRect()})).sort((a,b)=>a.r.left-b.r.left),cl=[];sp.forEach(x=>{const c=cl[cl.length-1];if(c&&x.r.left<c[c.length-1].r.right+6)c.push(x);else cl.push([x])});
  if(!cl.some(c=>c.length>1))return true;if(cl.some(c=>c.length>2))return false;
  cl.forEach(c=>{if(c.length==2){c[0].e.classList.add('r0');c[1].e.classList.add('l0')}});
- const r2=ks.map(e=>e.getBoundingClientRect()).sort((a,b)=>a.left-b.left);let ok=r2[0].left>=W.left-1&&r2[r2.length-1].right<=W.right+1;for(let i=1;i<r2.length&&ok;i++)if(r2[i].left<r2[i-1].right+2)ok=false;
- if(!ok)ks.forEach(e=>e.classList.remove('l0','r0'));return ok}
+ return true}
 function stackLb(){[['#lbt',28,28,'bottom'],['#lbl',28,28,'top'],['#lbb',38,36,'top']].forEach(([id,st,b,sd])=>{const t=$(id);if(!t)return;if(id!='#lbb'&&t.children.length&&pairSplit(t)){[...t.children].forEach(e=>{e.style[sd]='0px'});t.style.height=b+'px'}else stk(t,st,b,sd)})}
 function stk(t,step,base,side){if(!t)return;t.style.height='';t.style.margin='';if(!t.children.length){t.style.height='0px';t.style.margin='0';return}const sp=[...t.children].map(e=>({e,r:e.getBoundingClientRect()})).sort((a,b)=>a.r.left-b.r.left),ends=[];
  sp.forEach(x=>{let row=0;while(ends[row]!=null&&x.r.left<ends[row]+8)row++;ends[row]=x.r.right;x.e.style[side]=row*step+'px'});t.style.height=(base+Math.max(0,ends.length-1)*step)+'px'}
