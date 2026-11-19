@@ -201,10 +201,10 @@ main{animation:fi .28s ease both}
 <div id="ab" style="display:none"></div> <main id="m"></main>
 <script>
 const $=s=>document.querySelector(s),G=9.81,M=$('#m');
-const T={sj:{n:'Squat Jump',e:['Takeoff','Landing'],d:'Jump as high as you can, taking off from one or both legs. Record the jump from the side in slow motion, then mark the takeoff and landing frame by frame.'},
-cmj:{n:'Countermovement Jump',e:['Takeoff','Landing'],d:'Jump as high as you can, taking off from one or both legs. Record the jump from the side in slow motion, then mark the takeoff and landing frame by frame.'},
-rj1:{n:'Running Jump · Single Leg',e:['Takeoff','Landing'],d:'Jump as high as you can, taking off from one or both legs. Record the jump from the side in slow motion, then mark the takeoff and landing frame by frame.'},
-rj2:{n:'Running Jump · Double Leg',e:['Takeoff','Landing'],d:'Jump as high as you can, taking off from one or both legs. Record the jump from the side in slow motion, then mark the takeoff and landing frame by frame.'},
+const T={sj:{n:'Squat Jump',e:['Takeoff','Landing'],d:'Start in a stationary squat position, hold briefly without any countermovement, then jump vertically using one or both legs.'},
+cmj:{n:'Countermovement Jump',e:['Takeoff','Landing'],d:'Perform a vertical jump with a quick downward movement before takeoff, using one or both legs.'},
+rj1:{n:'Running Jump · Single Leg',e:['Takeoff','Landing'],d:'Perform a running approach followed by a vertical jump, taking off from one or both legs.'},
+rj2:{n:'Running Jump · Double Leg',e:['Takeoff','Landing'],d:'Perform a running approach followed by a vertical jump, taking off from one or both legs.'},
 dj:{n:'Drop Jump',e:['Landing','Takeoff','Landing'],d:'Mark the landing after the box, the takeoff, then the final landing.'},
 rsi:{n:'RSI 10/5 · Best 5 of 10',e:null,d:'Mark in order: the landing after the initial countermovement jump (excluded from scoring), then takeoff and landing for each of the 10 hops (21 marks). Only hops with ground contact under 250 ms count; at least 5 are required.'},
 };
@@ -450,7 +450,7 @@ const tx=(m,f)=>txRaw(m,m=='readwrite'?(s=>f({put:x=>{x._u=Date.now();return s.p
 // state
 let S,cur=0,dt=null,hasR=!!HTMLVideoElement.prototype.requestVideoFrameCallback;
 function home(){S=null;const row=(k,t,d,m)=>`<div class="hr"><div class="card tc" data-k="${k}"><b style="font-size:18px">${t}</b><p class="mu">${d}</p></div><div class="vs">${m}</div></div>`,vid=u=>`<video src="${u}" loop muted playsinline preload="auto"></video>`,slot=l=>`<div class="slot"><b>${l}</b><small>Video to be added</small></div>`;
- M.innerHTML='<div class=ph><h1>New test</h1><p>Choose an analysis, upload a slow-motion video, then mark takeoff and landing frame by frame.</p></div>'+segCtl('v')+row('cmj','Vertical Jump (CMJ, SJ)',T.cmj.d,vid(DEMO))+row('dj','Drop Jump (DJ)',T.dj.d,vid(DEMO_DJ))+row('rsi','RSI 10/5 · Best 5 of 10',T.rsi.d,vid(DEMO_RSI))+'<div style="margin:26px 4px 10px"><h3 style="margin:0 0 10px;font-size:18px">Before You Upload</h3><ul class=mu style="margin:0;padding-left:20px;line-height:1.8"><li>Record in slow motion. The more frames per second (FPS), the better. For the most accurate results, use 240 FPS or higher.</li><li>Keep feet and ground clearly visible.</li><li>Use a stable, stationary camera.</li><li>Capture both takeoff and landing.</li></ul></div>';
+ M.innerHTML='<div class=ph><h1>New test</h1><p>Choose an analysis, upload a slow-motion video, then mark takeoff and landing frame by frame.</p></div>'+segCtl('v')+row('cmj','Vertical Jump (CMJ, SJ)','Choose between the Countermovement Jump (CMJ), Squat Jump (SJ) and Approach Vertical Jump.',vid(DEMO))+row('dj','Drop Jump (DJ)',T.dj.d,vid(DEMO_DJ))+row('rsi','RSI 10/5 · Best 5 of 10',T.rsi.d,vid(DEMO_RSI))+'<div style="margin:26px 4px 10px"><h3 style="margin:0 0 10px;font-size:18px">Before You Upload</h3><ul class=mu style="margin:0;padding-left:20px;line-height:1.8"><li>Record in slow motion. The more frames per second (FPS), the better. For the most accurate results, use 240 FPS or higher.</li><li>Keep feet and ground clearly visible.</li><li>Use a stable, stationary camera.</li><li>Capture both takeoff and landing.</li></ul></div>';
  autoVids(M.querySelectorAll('.hr'));
  M.querySelectorAll('.tc').forEach(e=>e.onclick=()=>e.dataset.k=='cmj'?choose():setup(e.dataset.k))}
 const DEMO='media/cmj.mp4';
