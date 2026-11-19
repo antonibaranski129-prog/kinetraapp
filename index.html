@@ -143,6 +143,36 @@ html{touch-action:manipulation}a,button,.card,.tc{-webkit-tap-highlight-color:tr
 .gear{position:absolute;top:8px;right:10px;width:44px;min-height:44px;height:44px;padding:0;display:grid;place-items:center;background:none;border:0;border-radius:10px;color:var(--mu)}header .gear{background:none;border:0}.gear.on,header .gear.on{color:var(--lime)}@media(hover:hover){header .gear:hover{color:var(--tx);border:0}}@media(min-width:521px){header nav{margin-right:52px}nav button .hd{display:inline;border:0;padding:0;margin:0;background:none}}
 
 #ab{padding:10px 14px 0}.abr{display:flex;align-items:center;gap:10px;background:var(--cd);border:1px solid var(--bd);border-radius:12px;padding:8px 10px}.abl{color:var(--mu);font-size:12px;letter-spacing:.1em;text-transform:uppercase}.abr select{flex:1;min-width:0}.frp{border:1px solid var(--bd);border-radius:999px;padding:3px 10px;font-size:12px;font-weight:700;white-space:nowrap;color:var(--mu)}.frs{display:flex;justify-content:space-between;align-items:center;gap:10px}details.frt{margin-top:10px;padding:14px 16px}details.frt summary{list-style:none;cursor:pointer}details.frt summary::-webkit-details-marker{display:none}
+
+/* app-feel v1 */
+html{-webkit-text-size-adjust:100%;overscroll-behavior-y:none}
+body{-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+button,nav,.opt,.tc,.hd,.logo{-webkit-user-select:none;user-select:none}
+.card,.pn2,.pc,.gc{background:linear-gradient(180deg,#141A24,#10151D);box-shadow:inset 0 1px 0 rgba(255,255,255,.035),0 10px 28px -14px rgba(0,0,0,.6)}
+.card{border-radius:18px}.pc,.pn2{border-radius:16px}
+button{border-radius:12px;transition:transform .12s ease,border-color .15s,background-color .15s,filter .15s}
+button.p{box-shadow:0 8px 22px -10px rgba(0,207,234,.65)}
+button:active,.opt:active,.tc:active,.pc:active{transform:scale(.975)}
+.opt{border-radius:14px;transition:transform .12s ease,background-color .15s,border-color .15s,color .15s}
+.opt.sel{box-shadow:0 8px 22px -10px rgba(0,207,234,.65)}
+.ni{display:none}
+main{animation:fi .28s ease both}
+::-webkit-scrollbar{width:0;height:0}
+@media(max-width:640px){
+ header{position:sticky;top:0;z-index:20;background:#0B0E13;-webkit-backdrop-filter:none;backdrop-filter:none;padding:12px 16px;gap:0;border-bottom:1px solid rgba(37,46,59,.6)}
+ header .logo{font-size:17px;letter-spacing:.24em}header .tag{display:none}
+ nav{position:fixed;left:0;right:0;bottom:0;margin:0;width:100%;z-index:40;display:grid;grid-template-columns:repeat(4,1fr);gap:0;overflow:visible;background:rgba(14,19,26,.97);border-top:1px solid var(--bd);padding:6px 6px calc(6px + env(safe-area-inset-bottom,0px))}
+ nav button,nav button.on{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;min-height:52px;padding:6px 2px;font-size:11px;font-weight:600;letter-spacing:.02em;background:none;border:0;border-radius:12px;color:var(--mu);white-space:nowrap}
+ nav button.on{color:var(--lime);background:rgba(0,207,234,.09)}
+ nav button.on:after,nav button:after{display:none!important}
+ nav button .ni{display:block;width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+ nav button .hd{display:none}
+ main{padding:14px 16px calc(96px + env(safe-area-inset-bottom,0px))}
+ .toast{bottom:calc(84px + env(safe-area-inset-bottom,0px))}
+ input,select{font-size:16px}
+ .ph h1{font-size:28px}
+ .card{padding:18px}
+}
 </style></head><body>
 <header><span class="logo">PLYOTIC</span><span class="tag">Measure. Analyze. Improve.</span>
 <nav><button data-v="new" class="on">New Test</button><button data-v="fr">Freshness</button><button data-v="prof"><span class=hd>Athlete </span>Profile</button><button data-v="hist">Progression</button></nav><button class=gear data-v="set" aria-label="Settings" title="Settings"><svg width=22 height=22 viewBox="0 0 24 24" fill=none stroke=currentColor stroke-width=1.8 stroke-linecap=round stroke-linejoin=round><circle cx=12 cy=12 r=3.2 /><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z" /></svg></button></header>
@@ -683,6 +713,7 @@ const setTab=t=>document.querySelectorAll('nav button,.gear').forEach(x=>x.class
 async function nav(t){setTab(t);if(coachOn()&&CUR=='me'&&['new','prof','hist'].includes(t)){const r=await rosterAll();if(r.length)await switchAth(r[0].id);else{renderAB(t);coachEmpty();return}}
  ({new:home,fr:fresh,prof:prof,hist:hist,set:settings})[t]();renderAB(t)}
 document.querySelectorAll('nav button,.gear').forEach(b=>b.onclick=()=>nav(b.dataset.v));
+{const NI={new:'<path d="M13 2 4 14h7l-1 8 9-12h-7z"/>',fr:'<path d="M3 12h4l2-6 4 12 2-6h6"/>',prof:'<circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/>',hist:'<path d="M4 19V5M4 19h16M8 15l4-5 3 3 5-7"/>'};document.querySelectorAll('nav button').forEach(b=>{const p=NI[b.dataset.v];if(p&&!b.querySelector('.ni'))b.insertAdjacentHTML('afterbegin','<svg class=ni viewBox="0 0 24 24" aria-hidden=true>'+p+'</svg>')})}
 try{navigator.storage&&navigator.storage.persist&&navigator.storage.persist()}catch(e){}
 
 /* tap highlight v1 */
