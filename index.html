@@ -219,7 +219,7 @@ details.lg summary b{white-space:nowrap;font-size:15px}
 #m.enter>*:not(.sk):not(.pf){animation:fi .4s ease both}
 #m.enter>*:nth-child(2){animation-delay:.04s}#m.enter>*:nth-child(3){animation-delay:.08s}#m.enter>*:nth-child(n+4){animation-delay:.12s}
 @media(prefers-reduced-motion:reduce){#m.enter>*{animation:none!important}}
-.seg{touch-action:pan-y;user-select:none;-webkit-user-select:none}.seg i{transition:transform .14s ease-out,background .3s}.seg.rel i{transition:transform .6s cubic-bezier(.25,1.9,.5,1)}
+.seg{margin:18px 0 12px!important;touch-action:pan-y;user-select:none;-webkit-user-select:none}.seg i{transition:transform .14s ease-out,background .3s}.seg.rel i{transition:transform .6s cubic-bezier(.25,1.9,.5,1)}
 </style></head><body>
 <header><span class="logo">PLYOTIC</span><span class="tag">Measure. Analyze. Improve.</span>
 <nav><button data-v="new" class="on">New Test</button><button data-v="fr">Freshness</button><button data-v="prof"><span class=hd>Athlete </span>Profile</button><button data-v="hist">Progression</button><button data-v="log">History</button></nav><button class=gear data-v="set" aria-label="Settings" title="Settings"><svg width=22 height=22 viewBox="0 0 24 24" fill=none stroke=currentColor stroke-width=1.8 stroke-linecap=round stroke-linejoin=round><circle cx=12 cy=12 r=3.2 /><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z" /></svg></button></header>
@@ -740,7 +740,7 @@ const shHtml=(d,ps,u,dec,multi,none)=>{if(!d)return none||'';const mo=ps.length&
  if(!multi)return`<div class=shd>${dt}</div><div class=shv style="color:${ps[0].c}">${ps.map(q=>q.v.toFixed(dec)).join(' · ')} <small>${u}</small></div>`;
  return`<div class=shd>${dt}</div>`+ps.map(p=>`<div class=shr><i style="background:${p.c}"></i><span>${hx2(p.l)}</span><b>${p.v.toFixed(dec)} <small>${u}</small></b></div>`).join('')};
 
-(()=>{let sg=null,bs=[],cx=[];const SG=46,wave=x=>{bs.forEach((el,i)=>{const d=cx[i]-x,a=Math.exp(-d*d/(2*SG*SG));el.style.transform=`translateX(${(d/SG*a*7).toFixed(2)}px) scaleY(${(1+a*.5).toFixed(3)})`})};
+(()=>{let sg=null,bs=[],cx=[];const SG=26,wave=x=>{bs.forEach((el,i)=>{const d=cx[i]-x,a=Math.exp(-d*d/(2*SG*SG));el.style.transform=`translateX(${(d/SG*a*4).toFixed(2)}px) scaleY(${(1+a*.85).toFixed(3)})`})};
 document.addEventListener('pointerdown',e=>{const g=e.target.closest&&e.target.closest('.seg');if(!g||matchMedia('(prefers-reduced-motion:reduce)').matches)return;sg=g;g.classList.remove('rel');bs=[...g.children];cx=bs.map(el=>{const r=el.getBoundingClientRect();return r.left+r.width/2});try{g.setPointerCapture(e.pointerId)}catch(x){}wave(e.clientX)});
 document.addEventListener('pointermove',e=>{if(sg)wave(e.clientX)});
 const end=()=>{if(!sg)return;const g=sg,b=bs;sg=null;g.classList.add('rel');b.forEach(el=>el.style.transform='');setTimeout(()=>g.classList.remove('rel'),700)};
