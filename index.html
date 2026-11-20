@@ -293,7 +293,7 @@ function lvl(ps){const s=ps.reduce((a,p)=>a+(p.lt?10:Math.min(90,p.p)),0)/ps.len
 function uni(b){const g={};Object.entries(b).forEach(([k,x])=>{const a=k.split('|');if(a[1]!='Left leg'&&a[1]!='Right leg')return;const id=[a[0],a[2],a[3],a[4]||''].join('|');(g[id]=g[id]||{t:a[0],cfg:a[2],box:a[3]})[a[1]=='Left leg'?'L':'R']=x});return Object.values(g)}
 const ASYM=[[5,'Low asymmetry','#22C55E'],[10,'Moderate asymmetry','#F5C542'],[Infinity,'High asymmetry','#EF4444']];
 function asymCls(a){const v=Math.round(a*10)/10,t=ASYM.find(x=>v<x[0]);return{l:t[1],c:t[2]}}
-const PCOL=[[30,'#800020'],[50,'#EF4444'],[70,'#F97316'],[80,'#FACC15'],[90,'#22C55E'],[Infinity,'#00CFEA']];
+const PCOL=[[30,'#7F8DA0'],[50,'#3D8BFF'],[70,'#14C8B0'],[80,'#4ADE80'],[90,'#FFC83D'],[Infinity,'#00E5FF']];
 const pcolV=v=>PCOL.find(x=>v<=x[0])[1],pcol=p=>p.lt?PCOL[0][1]:p.gt?PCOL[PCOL.length-1][1]:pcolV(Math.round(p.p));
 const FR_N=5,FR_DAYS=28,dayN=d=>Math.floor(Date.parse(d+'T00:00:00Z')/864e5);
 function frDaily(rs){const m={};rs.filter(x=>okR(x)&&x.k=='cmj'&&pk(x)==PK.cmj).sort((a,b)=>Number(a.id)-Number(b.id)).forEach(x=>{const o=m[x.date];if(!o||val(x)>val(o))m[x.date]=x});return Object.values(m).sort((a,b)=>a.date<b.date?-1:a.date>b.date?1:0)}
