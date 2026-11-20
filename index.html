@@ -715,9 +715,18 @@ async function syncAll(){if(SYNC.busy)return null;const c=await authService.clie
   for(const d of dels.filter(d=>d.t=='r'))rows.push({athlete_id:d.aid=='me'?uid:d.aid,id:d.id,created_by:uid,k:null,date:null,data:{},updated_at:new Date().toISOString(),deleted:true});
   for(let i=0;i<rows.length;i+=200){E(await c.from('results').upsert(rows.slice(i,i+200),{onConflict:'athlete_id,id'}));up+=Math.min(200,rows.length-i)}
   lss('kdel',lsg('kdel',[]).filter(d=>!dels.some(q=>q.t==d.t&&q.id==d.id&&q.aid==d.aid)));lss('ksp',t0);if(!full&&maxU!=lp)lss('ksp_pull2',new Date(Date.parse(maxU)-120000).toISOString());lss('ksl',Date.now());lss('ksu',uid);lss('kserr','');
+  dn+=await syncPb(c,uid);
   if(dn&&S==null&&['fr','prof','hist'].includes(curTab()))nav(curTab());
   return{up,dn}
  }catch(e){lss('kserr',String(e&&e.message||e));return{err:String(e&&e.message||e)}}finally{SYNC.busy=false}}
+async function syncPb(c,uid){try{const r=await c.from('pb_layouts').select('*');if(r.error)return 0;const srv=new Map((r.data||[]).map(x=>[x.athlete_id,x])),loc=new Set();let ch=0;
+ try{for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k&&k.startsWith('kpb_'))loc.add(k.slice(4))}}catch(e){}
+ const ids=new Set([...[...loc].map(a=>a=='me'?uid:a),...srv.keys()]);
+ for(const sid of ids){const a=sid==uid?'me':sid,raw=localStorage.getItem('kpb_'+a),x=srv.get(sid);let lt=+localStorage.getItem('kpbt_'+a)||0;if(raw&&!lt){lt=Date.now();localStorage.setItem('kpbt_'+a,String(lt))}
+  const st=x?Date.parse(x.updated_at)||0:0;
+  if(x&&st>lt&&Array.isArray(x.layout)&&x.layout.length&&x.layout.every(q=>TO.includes(q.t))){localStorage.setItem('kpb_'+a,JSON.stringify(x.layout));localStorage.setItem('kpbt_'+a,String(st));ch++}
+  else if(raw&&lt>st){let lay=null;try{lay=JSON.parse(raw)}catch(e){}if(Array.isArray(lay)){const u=await c.from('pb_layouts').upsert({user_id:uid,athlete_id:sid,layout:lay,updated_at:new Date(lt).toISOString()});if(u.error)return ch}}}
+ return ch}catch(e){return 0}}
 async function accountUI(){const el=$('#acc');if(!el)return;if(!authService.enabled()){el.innerHTML='';return}
  const H='<div class=pt>Account &amp; sync</div>';el.innerHTML=H+'<p class=pf2>Loading…</p>';let se=null;try{se=await authService.getSession()}catch(e){}
  if(!se){el.innerHTML=H+'<p class=pf2>Sign in to back up your results and share them with a coach. Without an account everything stays on this device.</p><div id=alf style="margin-top:8px"></div>';
@@ -882,7 +891,7 @@ const TO=['cmj','sj','avj','dj','rsi'],TN={cmj:'Countermovement Jump',sj:'Squat 
 const pbDef=()=>TO.map(t=>({t,leg:'Both legs',arms:HA(t)?'Hands on Hips':'-',box:t=='dj'?BENCH.box:'-'}));
 const pbKey=()=>'kpb_'+CUR,pbK=c=>[c.t,c.t=='rsi'?'Both legs':c.leg,HA(c.t)?c.arms:'-',c.t=='dj'?c.box:'-'].join('|');
 const pbLoad=()=>{try{const a=JSON.parse(localStorage.getItem(pbKey()));if(Array.isArray(a)&&a.length&&a.every(c=>TO.includes(c.t)))return a}catch(e){}return pbDef()};
-const pbSave=a=>{try{localStorage.setItem(pbKey(),JSON.stringify(a))}catch(e){}};
+const pbSave=a=>{try{localStorage.setItem(pbKey(),JSON.stringify(a));localStorage.setItem('kpbt_'+CUR,String(Date.now()))}catch(e){}};
 function pbSheet(cfg,b,after){const o=document.createElement('div');o.className='pbs';document.body.appendChild(o);const F={t:'',q:''};
  const parse=k=>{const a=k.split('|');return{t:a[0],leg:a[1],arms:a[2],box:a[3]=='-'?'-':isNaN(+a[3])?a[3]:+a[3]}};
  const close=()=>{o.remove();after()};
