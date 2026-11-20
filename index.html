@@ -225,6 +225,10 @@ details.lg summary b{white-space:nowrap;font-size:15px}
 .pr3 .sc{touch-action:pan-y;user-select:none;-webkit-user-select:none;cursor:pointer}.mk.hold{transform:scale(1.55)}.pr3 .pvv{font-size:16px;font-weight:700;color:var(--tx);transition:color .15s,text-shadow .15s;font-variant-numeric:tabular-nums}.psgl{position:absolute;left:0;top:6px;height:6px;width:0;border-radius:99px;pointer-events:none;transition:opacity .4s}
 
 /* glass + colour tiles + radar + splash */
+/* subtle glass */
+.pf{position:relative}.pf:before{content:"";position:absolute;left:-20px;right:-20px;top:-40px;height:900px;background:radial-gradient(420px 280px at 12% 8%,rgba(0,207,234,.07),transparent 70%),radial-gradient(380px 300px at 95% 32%,rgba(52,120,246,.06),transparent 70%);pointer-events:none;z-index:0}.pf>*{position:relative;z-index:1}
+.pf .pc,.pf .pn2{background:linear-gradient(160deg,rgba(255,255,255,.04),rgba(255,255,255,.012));border:1px solid rgba(255,255,255,.07);-webkit-backdrop-filter:blur(10px) saturate(120%);backdrop-filter:blur(10px) saturate(120%);box-shadow:inset 0 1px 0 rgba(255,255,255,.05),0 10px 24px -16px rgba(0,0,0,.6)}
+.pf .pc.em{background:transparent;border:1px dashed rgba(255,255,255,.14);-webkit-backdrop-filter:none;backdrop-filter:none;box-shadow:none}
 .pcp{position:absolute;right:10px;top:12px;font-size:10.5px;font-weight:800;letter-spacing:.04em;border:1px solid;border-radius:99px;padding:1px 7px;background:rgba(0,0,0,.25)}
 .rdr{transform-origin:150px 128px;animation:rdi .8s cubic-bezier(.2,1.2,.3,1) both}@keyframes rdi{from{transform:scale(.15);opacity:0}}
 #splash{position:fixed;inset:0;z-index:999;background:#0B0E13;display:grid;place-items:center;transition:opacity .45s ease}#splash.out{opacity:0;pointer-events:none}
